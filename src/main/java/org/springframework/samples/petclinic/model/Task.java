@@ -116,7 +116,7 @@ public class Task extends BaseEntity {
 	////////////////////////////////////////////////////////////////////////////////
 	// WorkLog
 
-	@OneToMany(mappedBy = "workLog")
+	@OneToMany(mappedBy = "task")
 	private Set<WorkLog> workLogs;
 
 	protected Set<WorkLog> getWorkLogsInternal() {
