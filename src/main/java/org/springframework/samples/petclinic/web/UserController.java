@@ -1,18 +1,3 @@
-/*
- * Copyright 2002-2013 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.springframework.samples.petclinic.web;
 
 import java.util.Map;
@@ -20,32 +5,39 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.samples.petclinic.model.Owner;
+import org.springframework.samples.petclinic.model.Employee;
+import org.springframework.samples.petclinic.model.Manager;
 import org.springframework.samples.petclinic.service.AuthoritiesService;
-import org.springframework.samples.petclinic.service.OwnerService;
-import org.springframework.samples.petclinic.service.VetService;
+import org.springframework.samples.petclinic.service.EmployeeService;
+import org.springframework.samples.petclinic.service.ManagerService;
 import org.springframework.samples.petclinic.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * @author Juergen Hoeller
- * @author Ken Krebs
- * @author Arjen Poutsma
- * @author Michael Isvy
- */
 @Controller
 public class UserController {
 
-	private static final String VIEWS_OWNER_CREATE_FORM = "users/createOwnerForm";
+	////////////////////////////////////////////////////////////////////////////////
+	// URIs
 
-	private final OwnerService ownerService;
+	private static final String VIEWS_MANAGER_CREATE_FORM = "users/createManagerForm";
+	private static final String VIEWS_EMPLOYEE_CREATE_FORM = "users/createEmployeeForm";
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Services
+
+	private final ManagerService managerService;
+	private final EmployeeService employeeService;
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Initializers
 
 	@Autowired
-	public UserController(OwnerService clinicService) {
-		this.ownerService = clinicService;
+	public UserController(ManagerService managerService, EmployeeService employeeService, UserService userService, AuthoritiesService authoritiesService) {
+		this.managerService = managerService;
+		this.employeeService = employeeService;
 	}
 
 	@InitBinder
@@ -53,21 +45,44 @@ public class UserController {
 		dataBinder.setDisallowedFields("id");
 	}
 
-	@GetMapping(value = "/users/new")
-	public String initCreationForm(Map<String, Object> model) {
-		Owner owner = new Owner();
-		model.put("owner", owner);
-		return VIEWS_OWNER_CREATE_FORM;
+	////////////////////////////////////////////////////////////////////////////////
+	// Create manager
+
+	@GetMapping(value = "/users/manager/new")
+	public String initManagerCreationForm(Map<String, Object> model) {
+		Manager manager = new Manager();
+		model.put("manager", manager);
+		return VIEWS_MANAGER_CREATE_FORM;
 	}
 
-	@PostMapping(value = "/users/new")
-	public String processCreationForm(@Valid Owner owner, BindingResult result) {
+	@PostMapping(value = "/users/manager/new")
+	public String processManagerCreationForm(@Valid Manager manager, BindingResult result) {
 		if (result.hasErrors()) {
-			return VIEWS_OWNER_CREATE_FORM;
+			return VIEWS_MANAGER_CREATE_FORM;
 		}
 		else {
-			//creating owner, user, and authority
-			this.ownerService.saveOwner(owner);
+			this.managerService.saveManager(manager);
+			return "redirect:/";
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Create employee
+
+	@GetMapping(value = "/users/employee/new")
+	public String initEmployeeCreationForm(Map<String, Object> model) {
+		Employee employee = new Employee();
+		model.put("employee", employee);
+		return VIEWS_EMPLOYEE_CREATE_FORM;
+	}
+
+	@PostMapping(value = "/users/employee/new")
+	public String processEmployeeCreationForm(@Valid Employee employee, BindingResult result) {
+		if (result.hasErrors()) {
+			return VIEWS_EMPLOYEE_CREATE_FORM;
+		}
+		else {
+			this.employeeService.saveEmployee(employee);
 			return "redirect:/";
 		}
 	}

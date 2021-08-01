@@ -33,7 +33,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.samples.petclinic.configuration.SecurityConfiguration;
-import org.springframework.samples.petclinic.model.Owner;
+import org.springframework.samples.petclinic.model.Employee;
 import org.springframework.samples.petclinic.model.Pet;
 import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.service.OwnerService;
@@ -77,7 +77,7 @@ class PetControllerTests {
 		cat.setId(3);
 		cat.setName("hamster");
 		given(this.petService.findPetTypes()).willReturn(Lists.newArrayList(cat));
-		given(this.ownerService.findOwnerById(TEST_OWNER_ID)).willReturn(new Owner());
+		given(this.ownerService.findOwnerById(TEST_OWNER_ID)).willReturn(new Employee());
 		given(this.petService.findPetById(TEST_PET_ID)).willReturn(new Pet());
 	}
 

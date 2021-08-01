@@ -5,7 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.configuration.SecurityConfiguration;
-import org.springframework.samples.petclinic.model.Owner;
+import org.springframework.samples.petclinic.model.Employee;
 import org.springframework.samples.petclinic.service.VetService;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.web.servlet.MockMvc;
@@ -29,12 +29,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 /**
- * Test class for {@link OwnerController}
+ * Test class for {@link EmployeeController}
  *
  * @author Colin But
  */
 
-@WebMvcTest(controllers=OwnerController.class,
+@WebMvcTest(controllers=EmployeeController.class,
 		excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebSecurityConfigurer.class),
 		excludeAutoConfiguration= SecurityConfiguration.class)
 class OwnerControllerTests {
@@ -42,7 +42,7 @@ class OwnerControllerTests {
 	private static final int TEST_OWNER_ID = 1;
 
 	@Autowired
-	private OwnerController ownerController;
+	private EmployeeController ownerController;
 
 	@MockBean
 	private OwnerService clinicService;
@@ -56,12 +56,12 @@ class OwnerControllerTests {
 	@Autowired
 	private MockMvc mockMvc;
 
-	private Owner george;
+	private Employee george;
 
 	@BeforeEach
 	void setup() {
 
-		george = new Owner();
+		george = new Employee();
 		george.setId(TEST_OWNER_ID);
 		george.setFirstName("George");
 		george.setLastName("Franklin");
@@ -115,7 +115,7 @@ class OwnerControllerTests {
 	@WithMockUser(value = "spring")
         @Test
 	void testProcessFindFormSuccess() throws Exception {
-		given(this.clinicService.findOwnerByLastName("")).willReturn(Lists.newArrayList(george, new Owner()));
+		given(this.clinicService.findOwnerByLastName("")).willReturn(Lists.newArrayList(george, new Employee()));
 
 		mockMvc.perform(get("/owners")).andExpect(status().isOk()).andExpect(view().name("owners/ownersList"));
 	}

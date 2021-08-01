@@ -28,10 +28,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.dao.DataAccessException;
-import org.springframework.samples.petclinic.model.Owner;
+import org.springframework.samples.petclinic.model.Employee;
 import org.springframework.samples.petclinic.model.Pet;
 import org.springframework.samples.petclinic.model.PetType;
-import org.springframework.samples.petclinic.model.Vet;
+import org.springframework.samples.petclinic.model.Manager;
 import org.springframework.samples.petclinic.model.Visit;
 import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.service.exceptions.DuplicatedPetNameException;
@@ -98,7 +98,7 @@ class PetServiceTests {
 	@Test
 	@Transactional
 	public void shouldInsertPetIntoDatabaseAndGenerateId() {
-		Owner owner6 = this.ownerService.findOwnerById(6);
+		Employee owner6 = this.ownerService.findOwnerById(6);
 		int found = owner6.getPets().size();
 
 		Pet pet = new Pet();
@@ -125,7 +125,7 @@ class PetServiceTests {
 	@Test
 	@Transactional
 	public void shouldThrowExceptionInsertingPetsWithTheSameName() {
-		Owner owner6 = this.ownerService.findOwnerById(6);
+		Employee owner6 = this.ownerService.findOwnerById(6);
 		Pet pet = new Pet();
 		pet.setName("wario");
 		Collection<PetType> types = this.petService.findPetTypes();
@@ -166,7 +166,7 @@ class PetServiceTests {
 	@Test
 	@Transactional
 	public void shouldThrowExceptionUpdatingPetsWithTheSameName() {
-		Owner owner6 = this.ownerService.findOwnerById(6);
+		Employee owner6 = this.ownerService.findOwnerById(6);
 		Pet pet = new Pet();
 		pet.setName("wario");
 		Collection<PetType> types = this.petService.findPetTypes();

@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.samples.petclinic.configuration.SecurityConfiguration;
 import org.springframework.samples.petclinic.model.Specialty;
-import org.springframework.samples.petclinic.model.Vet;
+import org.springframework.samples.petclinic.model.Manager;
 import org.springframework.samples.petclinic.service.VetService;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.web.servlet.MockMvc;
@@ -45,11 +45,11 @@ class VetControllerTests {
 	@BeforeEach
 	void setup() {
 
-		Vet james = new Vet();
+		Manager james = new Manager();
 		james.setFirstName("James");
 		james.setLastName("Carter");
 		james.setId(1);
-		Vet helen = new Vet();
+		Manager helen = new Manager();
 		helen.setFirstName("Helen");
 		helen.setLastName("Leary");
 		helen.setId(2);

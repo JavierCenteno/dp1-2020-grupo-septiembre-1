@@ -28,10 +28,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.dao.DataAccessException;
-import org.springframework.samples.petclinic.model.Owner;
+import org.springframework.samples.petclinic.model.Employee;
 import org.springframework.samples.petclinic.model.Pet;
 import org.springframework.samples.petclinic.model.PetType;
-import org.springframework.samples.petclinic.model.Vet;
+import org.springframework.samples.petclinic.model.Manager;
 import org.springframework.samples.petclinic.model.Visit;
 import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.model.Authorities;
@@ -79,7 +79,7 @@ class OwnerServiceTests {
 
 	@Test
 	void shouldFindOwnersByLastName() {
-		Collection<Owner> owners = this.ownerService.findOwnerByLastName("Davis");
+		Collection<Employee> owners = this.ownerService.findOwnerByLastName("Davis");
 		assertThat(owners.size()).isEqualTo(2);
 
 		owners = this.ownerService.findOwnerByLastName("Daviss");
@@ -88,7 +88,7 @@ class OwnerServiceTests {
 
 	@Test
 	void shouldFindSingleOwnerWithPet() {
-		Owner owner = this.ownerService.findOwnerById(1);
+		Employee owner = this.ownerService.findOwnerById(1);
 		assertThat(owner.getLastName()).startsWith("Franklin");
 		assertThat(owner.getPets().size()).isEqualTo(1);
 		assertThat(owner.getPets().get(0).getType()).isNotNull();
@@ -98,10 +98,10 @@ class OwnerServiceTests {
 	@Test
 	@Transactional
 	public void shouldInsertOwner() {
-		Collection<Owner> owners = this.ownerService.findOwnerByLastName("Schultz");
+		Collection<Employee> owners = this.ownerService.findOwnerByLastName("Schultz");
 		int found = owners.size();
 
-		Owner owner = new Owner();
+		Employee owner = new Employee();
 		owner.setFirstName("Sam");
 		owner.setLastName("Schultz");
 		owner.setAddress("4, Evans Street");
@@ -123,7 +123,7 @@ class OwnerServiceTests {
 	@Test
 	@Transactional
 	void shouldUpdateOwner() {
-		Owner owner = this.ownerService.findOwnerById(1);
+		Employee owner = this.ownerService.findOwnerById(1);
 		String oldLastName = owner.getLastName();
 		String newLastName = oldLastName + "X";
 
