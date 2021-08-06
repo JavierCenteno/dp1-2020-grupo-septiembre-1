@@ -42,6 +42,11 @@ public class EmployeeService {
 		return this.employeeRepository.findById(id);
 	}
 
+	@Transactional(readOnly = true)
+	public Iterable<Employee> findAll() throws DataAccessException {
+		return this.employeeRepository.findAll();
+	}
+
 	@Transactional
 	public void saveEmployee(Employee employee) throws DataAccessException {
 		this.employeeRepository.save(employee);

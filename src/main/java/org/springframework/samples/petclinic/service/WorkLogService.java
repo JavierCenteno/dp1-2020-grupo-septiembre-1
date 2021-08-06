@@ -36,6 +36,11 @@ public class WorkLogService {
 		return this.workLogRepository.findById(id);
 	}
 
+	@Transactional(readOnly = true)
+	public Iterable<WorkLog> findAll() throws DataAccessException {
+		return this.workLogRepository.findAll();
+	}
+
 	@Transactional
 	public void saveWorkLog(WorkLog workLog) throws DataAccessException {
 		this.workLogRepository.save(workLog);

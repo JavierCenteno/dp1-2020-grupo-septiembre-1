@@ -36,6 +36,11 @@ public class ToolService {
 		return this.toolRepository.findById(id);
 	}
 
+	@Transactional(readOnly = true)
+	public Iterable<Tool> findAll() throws DataAccessException {
+		return this.toolRepository.findAll();
+	}
+
 	@Transactional
 	public void saveTool(Tool tool) throws DataAccessException {
 		this.toolRepository.save(tool);

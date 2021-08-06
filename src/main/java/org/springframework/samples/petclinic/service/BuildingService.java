@@ -36,6 +36,11 @@ public class BuildingService {
 		return this.buildingRepository.findById(id);
 	}
 
+	@Transactional(readOnly = true)
+	public Iterable<Building> findAll() throws DataAccessException {
+		return this.buildingRepository.findAll();
+	}
+
 	@Transactional
 	public void saveBuilding(Building building) throws DataAccessException {
 		this.buildingRepository.save(building);

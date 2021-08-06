@@ -36,6 +36,11 @@ public class TaskService {
 		return this.taskRepository.findById(id);
 	}
 
+	@Transactional(readOnly = true)
+	public Iterable<Task> findAll() throws DataAccessException {
+		return this.taskRepository.findAll();
+	}
+
 	@Transactional
 	public void saveTask(Task task) throws DataAccessException {
 		this.taskRepository.save(task);
