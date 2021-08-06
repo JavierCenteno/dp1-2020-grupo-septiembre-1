@@ -56,12 +56,12 @@ public class BuildingController {
 		ModelAndView mav;
 
 		Optional<Building> building = this.buildingService.findBuildingById(buildingId);
-		if (building.isPresent()) {
-			mav = new ModelAndView("buildings/buildingDetails");
-			mav.addObject("building", building.get());
-		} else {
+		if (!building.isPresent()) {
 			mav = list();
 			mav.addObject("error", "The building with id " + buildingId + " could not be found.");
+		} else {
+			mav = new ModelAndView("buildings/buildingDetails");
+			mav.addObject("building", building.get());
 		}
 
 		return mav;
@@ -81,8 +81,7 @@ public class BuildingController {
 	public String processCreationForm(@Valid Building building, BindingResult result) {
 		if (result.hasErrors()) {
 			return "buildings/createOrUpdateBuildingForm";
-		}
-		else {
+		} else {
 			this.buildingService.saveBuilding(building);
 			return "redirect:/buildings/" + building.getId();
 		}
