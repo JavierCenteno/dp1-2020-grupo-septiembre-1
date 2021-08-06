@@ -1,10 +1,15 @@
 package org.springframework.samples.petclinic.web;
 
+import java.util.Map;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.samples.petclinic.model.Building;
 import org.springframework.samples.petclinic.service.BuildingService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class BuildingController {
@@ -28,6 +33,37 @@ public class BuildingController {
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
-	// Create
+	// List
 
+	@GetMapping(value = "/buildings")
+	public ModelAndView list() {
+		ModelAndView mav = new ModelAndView("buildings/buildingsList");
+		
+		Iterable<Building> allBuildings = this.buildingService.findAll();
+		mav.addObject("selections", allBuildings);
+		
+		return mav;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Show
+
+	@GetMapping(value = "/buildings/{buildingId}")
+	public ModelAndView show(@PathVariable("buildingId") int buildingId) {
+		ModelAndView mav;
+		
+		Optional<Building> building = this.buildingService.findBuildingById(buildingId);
+		if(building.isPresent()) {
+			mav = new ModelAndView("buildings/buildingDetails");
+			mav.addObject("building", building.get());
+		} else {
+			mav = null;
+			// error
+		}
+
+		return mav;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Create
 }
