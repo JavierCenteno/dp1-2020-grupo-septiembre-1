@@ -1,6 +1,5 @@
 package org.springframework.samples.petclinic.web;
 
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,8 +56,8 @@ public class BuildingController {
 			mav = new ModelAndView("buildings/buildingDetails");
 			mav.addObject("building", building.get());
 		} else {
-			mav = null;
-			// error
+			mav = list();
+			mav.addObject("error", "The building with id " + buildingId + " could not be found.");
 		}
 
 		return mav;
