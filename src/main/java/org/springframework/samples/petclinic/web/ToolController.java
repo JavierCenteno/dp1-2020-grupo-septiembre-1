@@ -52,8 +52,7 @@ public class ToolController {
 	public ModelAndView list(@PathVariable("buildingId") int buildingId) {
 		ModelAndView mav = new ModelAndView("tools/toolsList");
 
-		// TODO: TOOLS OF BUILDING, NOT ALL TOOLS
-		Iterable<Tool> allTools = this.toolService.findAll();
+		Iterable<Tool> allTools = this.toolService.findByBuildingId(buildingId);
 		mav.addObject("selections", allTools);
 		mav.addObject("buildingId", buildingId);
 

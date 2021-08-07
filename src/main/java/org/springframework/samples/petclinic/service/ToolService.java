@@ -37,6 +37,11 @@ public class ToolService {
 	}
 
 	@Transactional(readOnly = true)
+	public Iterable<Tool> findByBuildingId(int buildingId) throws DataAccessException {
+		return this.toolRepository.findByBuildingId(buildingId);
+	}
+
+	@Transactional(readOnly = true)
 	public Iterable<Tool> findAll() throws DataAccessException {
 		return this.toolRepository.findAll();
 	}
