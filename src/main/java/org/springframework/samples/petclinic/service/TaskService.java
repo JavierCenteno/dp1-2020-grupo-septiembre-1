@@ -37,6 +37,11 @@ public class TaskService {
 	}
 
 	@Transactional(readOnly = true)
+	public Iterable<Task> findUnassigned() throws DataAccessException {
+		return this.taskRepository.findUnassigned();
+	}
+
+	@Transactional(readOnly = true)
 	public Iterable<Task> findAll() throws DataAccessException {
 		return this.taskRepository.findAll();
 	}

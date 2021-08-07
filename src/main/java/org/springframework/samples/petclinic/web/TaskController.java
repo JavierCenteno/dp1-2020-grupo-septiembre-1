@@ -41,7 +41,7 @@ public class TaskController {
 	public ModelAndView list() {
 		ModelAndView mav = new ModelAndView("tasks/tasksList");
 
-		Iterable<Task> allTasks = this.taskService.findAll();
+		Iterable<Task> allTasks = this.taskService.findUnassigned();
 		mav.addObject("selections", allTasks);
 
 		return mav;
