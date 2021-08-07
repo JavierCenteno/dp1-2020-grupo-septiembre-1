@@ -13,6 +13,10 @@
 			<th>Name</th>
 			<td><b><c:out value="${task.name}" /></b></td>
 		</tr>
+		<tr>
+			<th>Income</th>
+			<td><b><c:out value="${task.income}" /></b></td>
+		</tr>
 	</table>
 
 </petclinic:layout>

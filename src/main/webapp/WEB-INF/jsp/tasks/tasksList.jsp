@@ -17,6 +17,7 @@
 		<thead>
 			<tr>
 				<th>Name</th>
+				<th>Income</th>
 				<th>Actions</th>
 			</tr>
 		</thead>
@@ -28,6 +29,7 @@
 							<spring:param name="taskId" value="${task.id}" />
 						</spring:url> <a href="${fn:escapeXml(taskUrl)}"><c:out
 								value="${task.name}" /></a></td>
+					<td><c:out value="${task.income}" /></td>
 					<td></td>
 				</tr>
 			</c:forEach>
