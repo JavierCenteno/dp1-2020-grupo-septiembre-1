@@ -1,6 +1,5 @@
 package org.springframework.samples.petclinic.web;
 
-import java.util.Map;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -71,20 +70,28 @@ public class BuildingController {
 	// Create
 
 	@GetMapping(value = "/buildings/new")
-	public String initCreationForm(Map<String, Object> model) {
+	public ModelAndView initCreationForm() {
+		ModelAndView mav;
+
+		mav = new ModelAndView("buildings/createOrUpdateBuildingForm");
 		Building building = new Building();
-		model.put("building", building);
-		return "buildings/createOrUpdateBuildingForm";
+		mav.addObject("building", building);
+
+		return mav;
 	}
 
 	@PostMapping(value = "/buildings/new")
-	public String processCreationForm(@Valid Building building, BindingResult result) {
+	public ModelAndView processCreationForm(@Valid Building building, BindingResult result) {
+		ModelAndView mav;
+
 		if (result.hasErrors()) {
-			return "buildings/createOrUpdateBuildingForm";
+			mav = new ModelAndView("buildings/createOrUpdateBuildingForm");
 		} else {
 			this.buildingService.saveBuilding(building);
-			return "redirect:/buildings/" + building.getId();
+			mav = new ModelAndView("redirect:/buildings/" + building.getId());
 		}
+
+		return mav;
 	}
 
 }

@@ -1,6 +1,5 @@
 package org.springframework.samples.petclinic.web;
 
-import java.util.Map;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -34,7 +33,8 @@ public class ToolController {
 	// Initializers
 
 	@Autowired
-	public ToolController(ToolService toolService, BuildingService buildingService, BuildingController buildingController) {
+	public ToolController(ToolService toolService, BuildingService buildingService,
+			BuildingController buildingController) {
 		this.toolService = toolService;
 		this.buildingService = buildingService;
 		this.buildingController = buildingController;
@@ -69,15 +69,16 @@ public class ToolController {
 
 		Optional<Tool> tool = this.toolService.findToolById(toolId);
 		Optional<Building> building = this.buildingService.findBuildingById(buildingId);
-		if(!building.isPresent()) {
+		if (!building.isPresent()) {
 			mav = this.buildingController.list();
 			mav.addObject("error", "The building with id " + buildingId + " could not be found.");
-		} else if(!tool.isPresent()) {
+		} else if (!tool.isPresent()) {
 			mav = this.list(buildingId);
 			mav.addObject("error", "The tool with id " + toolId + " could not be found.");
-		} else if(tool.get().getBuilding().getId() != buildingId) {
+		} else if (tool.get().getBuilding().getId() != buildingId) {
 			mav = this.list(buildingId);
-			mav.addObject("error", "The tool with id " + toolId + " doesn't belong to the building with id " + buildingId + ".");
+			mav.addObject("error",
+					"The tool with id " + toolId + " doesn't belong to the building with id " + buildingId + ".");
 		} else {
 			mav = new ModelAndView("tools/toolDetails");
 			mav.addObject("tool", tool.get());
@@ -90,21 +91,41 @@ public class ToolController {
 	// Create
 
 	@GetMapping(value = "/buildings/{buildingId}/tools/new")
-	public String initCreationForm(Map<String, Object> model) {
-		Tool tool = new Tool();
-		model.put("tool", tool);
-		return "tools/createOrUpdateToolForm";
+	public ModelAndView initCreationForm(@PathVariable("buildingId") int buildingId) {
+		ModelAndView mav;
+
+		Optional<Building> building = this.buildingService.findBuildingById(buildingId);
+		if (!building.isPresent()) {
+			mav = this.buildingController.list();
+			mav.addObject("error", "The building with id " + buildingId + " could not be found.");
+		} else {
+			mav = new ModelAndView("tools/createOrUpdateToolForm");
+			Tool tool = new Tool();
+			mav.addObject("tool", tool);
+			mav.addObject("buildingId", buildingId);
+		}
+
+		return mav;
 	}
 
 	@PostMapping(value = "/buildings/{buildingId}/tools/new")
-	public String processCreationForm(@Valid Tool tool, BindingResult result) {
-		if (result.hasErrors()) {
-			return "tools/createOrUpdateToolForm";
-		}
-		else {
+	public ModelAndView processCreationForm(@PathVariable("buildingId") int buildingId, @Valid Tool tool,
+			BindingResult result) {
+		ModelAndView mav;
+
+		Optional<Building> building = this.buildingService.findBuildingById(buildingId);
+		if (!building.isPresent()) {
+			mav = this.buildingController.list();
+			mav.addObject("error", "The building with id " + buildingId + " could not be found.");
+		} else if (result.hasErrors()) {
+			mav = new ModelAndView("tools/createOrUpdateToolForm");
+		} else {
+			tool.setBuilding(building.get());
 			this.toolService.saveTool(tool);
-			return "redirect:/tools/" + tool.getId();
+			mav = new ModelAndView("redirect:/buildings/" + buildingId + "/tools/" + tool.getId());
 		}
+
+		return mav;
 	}
 
 }
