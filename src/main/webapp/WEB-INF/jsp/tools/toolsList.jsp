@@ -11,7 +11,7 @@
 		<div style="color: firebrick; font-weight: bold;">${error}</div>
 	</c:if>
 
-	<h2>Tools</h2>
+	<h2>Tools of Building</h2>
 
 	<table id="toolsTable" class="table table-striped">
 		<thead>
