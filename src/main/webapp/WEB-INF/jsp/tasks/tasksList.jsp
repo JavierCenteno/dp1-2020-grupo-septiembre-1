@@ -24,7 +24,7 @@
 		<tbody>
 			<c:forEach items="${selections}" var="task">
 				<tr>
-					<td><spring:url value="/buildings/${buildingId}/tasks/{taskId}"
+					<td><spring:url value="/tasks/{taskId}"
 							var="taskUrl">
 							<spring:param name="taskId" value="${task.id}" />
 						</spring:url> <a href="${fn:escapeXml(taskUrl)}"><c:out
