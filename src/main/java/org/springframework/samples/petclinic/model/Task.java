@@ -52,11 +52,25 @@ public class Task extends BaseEntity {
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
+	// Complete
+
+	@Column(name = "complete")
+	protected Boolean complete;
+
+	public Boolean getComplete() {
+		return this.complete;
+	}
+
+	public void setComplete(Boolean complete) {
+		this.complete = complete;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
 	// Employee
 
 	@ManyToMany
 	private Set<Employee> employees;
-	
+
 	protected Set<Employee> getEmployeesInternal() {
 		if (this.employees == null) {
 			this.employees = new HashSet<>();
@@ -77,7 +91,7 @@ public class Task extends BaseEntity {
 	public void addEmployee(Employee employee) {
 		getEmployeesInternal().add(employee);
 	}
-	
+
 	public boolean removeEmployee(Employee employee) {
 		return getEmployeesInternal().remove(employee);
 	}

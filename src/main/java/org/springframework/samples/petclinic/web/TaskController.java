@@ -5,7 +5,9 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.samples.petclinic.model.Employee;
 import org.springframework.samples.petclinic.model.Task;
+import org.springframework.samples.petclinic.service.EmployeeService;
 import org.springframework.samples.petclinic.service.TaskService;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -20,13 +22,15 @@ public class TaskController {
 	// Services
 
 	private final TaskService taskService;
+	private final EmployeeService employeeService;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Initializers
 
 	@Autowired
-	public TaskController(TaskService taskService) {
+	public TaskController(TaskService taskService, EmployeeService employeeService) {
 		this.taskService = taskService;
+		this.employeeService = employeeService;
 	}
 
 	@InitBinder
@@ -99,11 +103,18 @@ public class TaskController {
 
 	@GetMapping(value = "/myTasks")
 	public ModelAndView listEmployee() {
-		ModelAndView mav = new ModelAndView("myTasks/tasksList");
+		ModelAndView mav;
 
-		// TODO: GET TASKS OF EMPLOYEE
-		Iterable<Task> allTasks = null;
-		mav.addObject("selections", allTasks);
+		Optional<Employee> employee = this.employeeService.findEmployeePrincipal();
+		if (!employee.isPresent()) {
+			// No *debería* ser posible
+			// El usuario necesita la autoridad "employee" para llegar aquí
+			mav = new ModelAndView("redirect:/");
+		} else {
+			mav = new ModelAndView("myTasks/tasksList");
+			Iterable<Task> allTasks = this.taskService.findAssignedToEmployeeAndNotComplete(employee.get().getId());
+			mav.addObject("selections", allTasks);
+		}
 
 		return mav;
 	}
