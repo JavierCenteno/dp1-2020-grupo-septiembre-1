@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.model.Employee;
+import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +41,21 @@ public class EmployeeService {
 	@Transactional(readOnly = true)
 	public Optional<Employee> findEmployeeById(int id) throws DataAccessException {
 		return this.employeeRepository.findById(id);
+	}
+
+	@Transactional(readOnly = true)
+	public Optional<Employee> findEmployeeByUsername(String username) throws DataAccessException {
+		return this.employeeRepository.findByUsername(username);
+	}
+
+	@Transactional(readOnly = true)
+	public Optional<Employee> findEmployeePrincipal() {
+		Optional<User> user = this.userService.findPrincipal();
+		if (!user.isPresent()) {
+			return Optional.empty();
+		} else {
+			return this.employeeRepository.findByUsername(user.get().getUsername());
+		}
 	}
 
 	@Transactional(readOnly = true)

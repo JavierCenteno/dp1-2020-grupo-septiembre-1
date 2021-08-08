@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Manager;
+import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.repository.ManagerRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +40,21 @@ public class ManagerService {
 	@Transactional(readOnly = true)
 	public Optional<Manager> findManagerById(int id) {
 		return this.managerRepository.findById(id);
+	}
+
+	@Transactional(readOnly = true)
+	public Optional<Manager> findManagerByUsername(String username) {
+		return this.managerRepository.findByUsername(username);
+	}
+
+	@Transactional(readOnly = true)
+	public Optional<Manager> findManagerPrincipal() {
+		Optional<User> user = this.userService.findPrincipal();
+		if (!user.isPresent()) {
+			return Optional.empty();
+		} else {
+			return this.managerRepository.findByUsername(user.get().getUsername());
+		}
 	}
 
 	@Transactional(readOnly = true)
