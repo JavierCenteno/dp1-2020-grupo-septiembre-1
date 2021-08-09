@@ -129,4 +129,31 @@ public class TaskController {
 		return mav;
 	}
 
+	////////////////////////////////////////////////////////////////////////////////
+	// Complete (employee)
+
+	@PostMapping(value = "/myTasks/{taskId}/complete")
+	public ModelAndView completeEmployee(@PathVariable("taskId") int taskId) {
+		ModelAndView mav;
+
+		Optional<Employee> employee = this.employeeService.findEmployeePrincipal();
+		Optional<Task> task = this.taskService.findTaskById(taskId);
+		
+		if (!employee.isPresent()) {
+			// No *debería* ser posible
+			// El usuario necesita la autoridad "employee" para llegar aquí
+			mav = new ModelAndView("redirect:/");
+		} else if (!task.isPresent()) {
+			mav = this.listEmployee();
+			mav.addObject("error", "The task with id " + taskId + " could not be found.");
+		} else {
+			mav = this.listEmployee();
+
+			// TODO: FINISH THIS TASK (UNASSIGN TOOLS AND EMPLOYEES)
+
+		}
+
+		return mav;
+	}
+
 }
