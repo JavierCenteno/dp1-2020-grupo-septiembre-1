@@ -41,12 +41,22 @@ public class TaskController {
 	////////////////////////////////////////////////////////////////////////////////
 	// List (manager)
 
-	@GetMapping(value = "/allTasks")
-	public ModelAndView listManager() {
-		ModelAndView mav = new ModelAndView("allTasks/tasksList");
+	@GetMapping(value = "/unassignedTasks")
+	public ModelAndView listUnassigned() {
+		ModelAndView mav = new ModelAndView("tasks/tasksList");
 
-		Iterable<Task> allTasks = this.taskService.findUnassigned();
-		mav.addObject("selections", allTasks);
+		Iterable<Task> tasks = this.taskService.findUnassigned();
+		mav.addObject("selections", tasks);
+
+		return mav;
+	}
+
+	@GetMapping(value = "/uncompleteTasks")
+	public ModelAndView listUncompleted() {
+		ModelAndView mav = new ModelAndView("tasks/tasksList");
+
+		Iterable<Task> tasks = this.taskService.findAssignedAndUncomplete();
+		mav.addObject("selections", tasks);
 
 		return mav;
 	}
@@ -54,16 +64,16 @@ public class TaskController {
 	////////////////////////////////////////////////////////////////////////////////
 	// Show (manager)
 
-	@GetMapping(value = "/allTasks/{taskId}")
+	@GetMapping(value = "/tasks/{taskId}")
 	public ModelAndView showManager(@PathVariable("taskId") int taskId) {
 		ModelAndView mav;
 
 		Optional<Task> task = this.taskService.findTaskById(taskId);
 		if (!task.isPresent()) {
-			mav = this.listManager();
+			mav = this.listUnassigned();
 			mav.addObject("error", "The task with id " + taskId + " could not be found.");
 		} else {
-			mav = new ModelAndView("allTasks/taskDetails");
+			mav = new ModelAndView("tasks/taskDetails");
 			mav.addObject("task", task.get());
 		}
 
@@ -73,26 +83,26 @@ public class TaskController {
 	////////////////////////////////////////////////////////////////////////////////
 	// Create (manager)
 
-	@GetMapping(value = "/allTasks/new")
+	@GetMapping(value = "/tasks/new")
 	public ModelAndView initCreationFormManager() {
 		ModelAndView mav;
 
-		mav = new ModelAndView("allTasks/createOrUpdateTaskForm");
+		mav = new ModelAndView("tasks/createOrUpdateTaskForm");
 		Task task = new Task();
 		mav.addObject("task", task);
 
 		return mav;
 	}
 
-	@PostMapping(value = "/allTasks/new")
+	@PostMapping(value = "/tasks/new")
 	public ModelAndView processCreationFormManager(@Valid Task task, BindingResult result) {
 		ModelAndView mav;
 
 		if (result.hasErrors()) {
-			mav = new ModelAndView("allTasks/createOrUpdateTaskForm");
+			mav = new ModelAndView("tasks/createOrUpdateTaskForm");
 		} else {
 			this.taskService.saveTask(task);
-			mav = new ModelAndView("redirect:/allTasks/" + task.getId());
+			mav = new ModelAndView("redirect:/uncompleteTasks/" + task.getId());
 		}
 
 		return mav;
@@ -112,8 +122,8 @@ public class TaskController {
 			mav = new ModelAndView("redirect:/");
 		} else {
 			mav = new ModelAndView("myTasks/tasksList");
-			Iterable<Task> allTasks = this.taskService.findAssignedToEmployeeAndNotComplete(employee.get().getId());
-			mav.addObject("selections", allTasks);
+			Iterable<Task> tasks = this.taskService.findAssignedToEmployeeAndNotComplete(employee.get().getId());
+			mav.addObject("selections", tasks);
 		}
 
 		return mav;
