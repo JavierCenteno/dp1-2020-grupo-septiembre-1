@@ -70,6 +70,14 @@ public class Employee extends Actor {
 		return Collections.unmodifiableList(sortedTasks);
 	}
 
+	public void addTask(Task task) {
+		getTasksInternal().add(task);
+	}
+
+	public boolean removeTask(Task task) {
+		return getTasksInternal().remove(task);
+	}
+
 	////////////////////////////////////////////////////////////////////////////////
 	// WorkLog
 
@@ -90,6 +98,14 @@ public class Employee extends Actor {
 	public List<WorkLog> getWorkLogs() {
 		List<WorkLog> sortedWorkLogs = new ArrayList<>(getWorkLogsInternal());
 		return Collections.unmodifiableList(sortedWorkLogs);
+	}
+
+	public void addWorkLog(WorkLog workLog) {
+		getWorkLogsInternal().add(workLog);
+	}
+
+	public boolean removeWorkLog(WorkLog workLog) {
+		return getWorkLogsInternal().remove(workLog);
 	}
 
 }
