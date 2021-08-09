@@ -47,6 +47,11 @@ public class TaskService {
 	}
 
 	@Transactional(readOnly = true)
+	public Iterable<Task> findUncomplete() throws DataAccessException {
+		return this.taskRepository.findUncomplete();
+	}
+
+	@Transactional(readOnly = true)
 	public Iterable<Task> findAssignedToEmployeeAndNotComplete(int employeeId) throws DataAccessException {
 		return this.taskRepository.findAssignedToEmployeeAndNotComplete(employeeId);
 	}
