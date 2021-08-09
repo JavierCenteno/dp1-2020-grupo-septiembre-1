@@ -42,6 +42,11 @@ public class ToolService {
 	}
 
 	@Transactional(readOnly = true)
+	public Iterable<Tool> findNotAssignedToTask(int taskId) throws DataAccessException {
+		return this.toolRepository.findNotAssignedToTask(taskId);
+	}
+
+	@Transactional(readOnly = true)
 	public Iterable<Tool> findAll() throws DataAccessException {
 		return this.toolRepository.findAll();
 	}

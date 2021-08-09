@@ -194,8 +194,9 @@ public class TaskController {
 			mav = this.listUnassignedManager();
 			mav.addObject("error", "The task with id " + taskId + " is complete.");
 		} else {
-			// TODO: GET LIST OF EMPLOYEES
-			mav = null;
+			mav = null;// TODO: MAKE THE VIEW TO LIST EMPLOYEES
+			Iterable<Employee> employees = this.employeeService.findNotAssignedToTask(taskId);
+			mav.addObject("selections", employees);
 		}
 
 		return mav;
@@ -253,8 +254,9 @@ public class TaskController {
 			mav = this.listUncompletedManager();
 			mav.addObject("error", "The task with id " + taskId + " is complete.");
 		} else {
-			// TODO: GET LIST OF TOOLS
-			mav = null;
+			mav = null;// TODO: MAKE THE VIEW TO LIST TOOLS
+			Iterable<Tool> tools = this.toolService.findNotAssignedToTask(taskId);
+			mav.addObject("selections", tools);
 		}
 
 		return mav;

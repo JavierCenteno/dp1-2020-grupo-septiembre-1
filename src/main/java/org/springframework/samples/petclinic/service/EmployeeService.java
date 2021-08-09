@@ -49,6 +49,11 @@ public class EmployeeService {
 	}
 
 	@Transactional(readOnly = true)
+	public Iterable<Employee> findNotAssignedToTask(int taskId) throws DataAccessException {
+		return this.employeeRepository.findNotAssignedToTask(taskId);
+	}
+
+	@Transactional(readOnly = true)
 	public Optional<Employee> findEmployeePrincipal() {
 		Optional<User> user = this.userService.findPrincipal();
 		if (!user.isPresent()) {
