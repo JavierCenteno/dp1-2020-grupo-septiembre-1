@@ -119,8 +119,11 @@ public class ToolController {
 		} else if (result.hasErrors()) {
 			mav = new ModelAndView("tools/createOrUpdateToolForm");
 		} else {
-			tool.setBuilding(building.get());
+			Building buildingInternal = building.get();
+			tool.setBuilding(buildingInternal);
 			this.toolService.saveTool(tool);
+			buildingInternal.addTool(tool);
+			this.buildingService.saveBuilding(buildingInternal);
 			mav = new ModelAndView("redirect:/buildings/" + buildingId + "/tools/" + tool.getId());
 		}
 

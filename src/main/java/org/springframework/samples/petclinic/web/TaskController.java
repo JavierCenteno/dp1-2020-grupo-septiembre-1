@@ -178,4 +178,123 @@ public class TaskController {
 		return mav;
 	}
 
+	////////////////////////////////////////////////////////////////////////////////
+	// Assign employee (manager)
+
+	@GetMapping(value = "/tasks/{taskId}/assignEmployee")
+	public ModelAndView assignEmployeeListManager(@PathVariable("taskId") int taskId) {
+		ModelAndView mav;
+
+		Optional<Task> task = this.taskService.findTaskById(taskId);
+
+		if (!task.isPresent()) {
+			mav = this.listUnassignedManager();
+			mav.addObject("error", "The task with id " + taskId + " could not be found.");
+		} else if (!task.get().getComplete()) {
+			mav = this.listUnassignedManager();
+			mav.addObject("error", "The task with id " + taskId + " is complete.");
+		} else {
+			// TODO: GET LIST OF EMPLOYEES
+			mav = null;
+		}
+
+		return mav;
+	}
+
+	@PostMapping(value = "/tasks/{taskId}/assignEmployee/{employeeId}")
+	public ModelAndView assignEmployeeManager(@PathVariable("taskId") int taskId,
+			@PathVariable("employeeId") int employeeId) {
+		ModelAndView mav;
+
+		Optional<Task> task = this.taskService.findTaskById(taskId);
+		Optional<Employee> employee = this.employeeService.findEmployeeById(employeeId);
+
+		if (!employee.isPresent()) {
+			mav = this.listUnassignedManager();
+			mav.addObject("error", "The employee with id " + employeeId + " could not be found.");
+		} else if (!task.isPresent()) {
+			mav = this.listUnassignedManager();
+			mav.addObject("error", "The task with id " + taskId + " could not be found.");
+		} else if (!task.get().getComplete()) {
+			mav = this.listUnassignedManager();
+			mav.addObject("error", "The task with id " + taskId + " is complete.");
+		} else if (task.get().getEmployees().size() > 0
+				? !task.get().getEmployees().get(0).getBuilding().equals(employee.get().getBuilding())
+				: false) {
+			mav = this.listUnassignedManager();
+			mav.addObject("error",
+					"The task with id " + taskId + " cannot be assigned to employees at different buildings.");
+		} else {
+			Task taskInternal = task.get();
+			Employee employeeInternal = employee.get();
+			taskInternal.addEmployee(employeeInternal);
+			this.taskService.saveTask(taskInternal);
+			employeeInternal.addTask(taskInternal);
+			this.employeeService.saveEmployee(employeeInternal);
+			mav = this.listUncompletedManager();
+		}
+
+		return mav;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Assign tool (manager)
+
+	@GetMapping(value = "/tasks/{taskId}/assignTool")
+	public ModelAndView assignToolListManager(@PathVariable("taskId") int taskId) {
+		ModelAndView mav;
+
+		Optional<Task> task = this.taskService.findTaskById(taskId);
+
+		if (!task.isPresent()) {
+			mav = this.listUncompletedManager();
+			mav.addObject("error", "The task with id " + taskId + " could not be found.");
+		} else if (!task.get().getComplete()) {
+			mav = this.listUncompletedManager();
+			mav.addObject("error", "The task with id " + taskId + " is complete.");
+		} else {
+			// TODO: GET LIST OF TOOLS
+			mav = null;
+		}
+
+		return mav;
+	}
+
+	@PostMapping(value = "/tasks/{taskId}/assignTool/{toolId}")
+	public ModelAndView assignToolManager(@PathVariable("taskId") int taskId, @PathVariable("toolId") int toolId) {
+		ModelAndView mav;
+
+		Optional<Task> task = this.taskService.findTaskById(taskId);
+		Optional<Tool> tool = this.toolService.findToolById(toolId);
+
+		if (!tool.isPresent()) {
+			mav = this.listUnassignedManager();
+			mav.addObject("error", "The tool with id " + toolId + " could not be found.");
+		} else if (!task.isPresent()) {
+			mav = this.listUnassignedManager();
+			mav.addObject("error", "The task with id " + taskId + " could not be found.");
+		} else if (!task.get().getComplete()) {
+			mav = this.listUnassignedManager();
+			mav.addObject("error", "The task with id " + taskId + " is complete.");
+		} else if (task.get().getEmployees().size() == 0) {
+			mav = this.listUnassignedManager();
+			mav.addObject("error",
+					"The task with id " + taskId + " cannot be assigned tools as it has no employees assigned yet.");
+		} else if (!task.get().getEmployees().get(0).getBuilding().equals(tool.get().getBuilding())) {
+			mav = this.listUnassignedManager();
+			mav.addObject("error",
+					"The task with id " + taskId + " cannot be assigned tools and employees at different buildings.");
+		} else {
+			Task taskInternal = task.get();
+			Tool toolInternal = tool.get();
+			taskInternal.addTool(toolInternal);
+			this.taskService.saveTask(taskInternal);
+			toolInternal.setTask(taskInternal);
+			this.toolService.saveTool(toolInternal);
+			mav = this.listUncompletedManager();
+		}
+
+		return mav;
+	}
+
 }
