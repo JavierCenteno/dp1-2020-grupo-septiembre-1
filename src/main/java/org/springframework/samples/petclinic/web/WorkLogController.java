@@ -90,6 +90,9 @@ public class WorkLogController {
 					+ totalHours + ", you attempted to add " + workLog.getHours() + ").");
 		} else {
 			this.workLogService.saveWorkLog(workLog);
+			Task taskInternal = task.get();
+			taskInternal.addWorkLog(workLog);
+			this.taskService.saveTask(taskInternal);
 			mav = new ModelAndView("redirect:/myTasks/");
 		}
 
