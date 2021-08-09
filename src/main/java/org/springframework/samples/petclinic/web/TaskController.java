@@ -41,8 +41,8 @@ public class TaskController {
 	////////////////////////////////////////////////////////////////////////////////
 	// List (manager)
 
-	@GetMapping(value = "/unassignedTasks")
-	public ModelAndView listUnassigned() {
+	@GetMapping(value = "/tasks/unassignedTasks")
+	public ModelAndView listUnassignedManager() {
 		ModelAndView mav = new ModelAndView("tasks/tasksList");
 
 		Iterable<Task> tasks = this.taskService.findUnassigned();
@@ -51,8 +51,8 @@ public class TaskController {
 		return mav;
 	}
 
-	@GetMapping(value = "/uncompleteTasks")
-	public ModelAndView listUncompleted() {
+	@GetMapping(value = "/tasks/uncompleteTasks")
+	public ModelAndView listUncompletedManager() {
 		ModelAndView mav = new ModelAndView("tasks/tasksList");
 
 		Iterable<Task> tasks = this.taskService.findAssignedAndUncomplete();
@@ -70,7 +70,7 @@ public class TaskController {
 
 		Optional<Task> task = this.taskService.findTaskById(taskId);
 		if (!task.isPresent()) {
-			mav = this.listUnassigned();
+			mav = this.listUnassignedManager();
 			mav.addObject("error", "The task with id " + taskId + " could not be found.");
 		} else {
 			mav = new ModelAndView("tasks/taskDetails");
