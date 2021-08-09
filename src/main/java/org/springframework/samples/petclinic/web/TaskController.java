@@ -5,10 +5,14 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.samples.petclinic.model.Building;
 import org.springframework.samples.petclinic.model.Employee;
 import org.springframework.samples.petclinic.model.Task;
+import org.springframework.samples.petclinic.model.Tool;
+import org.springframework.samples.petclinic.service.BuildingService;
 import org.springframework.samples.petclinic.service.EmployeeService;
 import org.springframework.samples.petclinic.service.TaskService;
+import org.springframework.samples.petclinic.service.ToolService;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -23,14 +27,19 @@ public class TaskController {
 
 	private final TaskService taskService;
 	private final EmployeeService employeeService;
+	private final ToolService toolService;
+	private final BuildingService buildingService;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Initializers
 
 	@Autowired
-	public TaskController(TaskService taskService, EmployeeService employeeService) {
+	public TaskController(TaskService taskService, EmployeeService employeeService, ToolService toolService,
+			BuildingService buildingService) {
 		this.taskService = taskService;
 		this.employeeService = employeeService;
+		this.toolService = toolService;
+		this.buildingService = buildingService;
 	}
 
 	@InitBinder
@@ -138,7 +147,7 @@ public class TaskController {
 
 		Optional<Employee> employee = this.employeeService.findEmployeePrincipal();
 		Optional<Task> task = this.taskService.findTaskById(taskId);
-		
+
 		if (!employee.isPresent()) {
 			// No *debería* ser posible
 			// El usuario necesita la autoridad "employee" para llegar aquí
@@ -146,11 +155,24 @@ public class TaskController {
 		} else if (!task.isPresent()) {
 			mav = this.listEmployee();
 			mav.addObject("error", "The task with id " + taskId + " could not be found.");
+		} else if (!task.get().getEmployees().contains(employee.get())) {
+			mav = this.listEmployee();
+			mav.addObject("error", "The task with id " + taskId + " doesn't belong to the employee with id "
+					+ employee.get().getId() + ".");
 		} else {
 			mav = this.listEmployee();
-
-			// TODO: FINISH THIS TASK (UNASSIGN TOOLS AND EMPLOYEES)
-
+			Task taskInternal = task.get();
+			for (Tool toolOfTask : taskInternal.getTools()) {
+				toolOfTask.setTask(null);
+				this.toolService.saveTool(toolOfTask);
+				taskInternal.removeTool(toolOfTask);
+			}
+			taskInternal.setComplete(true);
+			this.taskService.saveTask(taskInternal);
+			Employee employeeOfTask = taskInternal.getEmployees().get(0);
+			Building buildingOfTask = employeeOfTask.getBuilding();
+			buildingOfTask.setIncome(buildingOfTask.getIncome() + taskInternal.getIncome());
+			this.buildingService.saveBuilding(buildingOfTask);
 		}
 
 		return mav;
