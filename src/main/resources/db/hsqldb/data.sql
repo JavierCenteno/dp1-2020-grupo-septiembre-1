@@ -36,6 +36,22 @@ INSERT INTO users(username,password,enabled) VALUES ('employee4','employee4',TRU
 INSERT INTO authorities(id,username,authority) VALUES (8,'employee4','employee');
 INSERT INTO employees(id,name,email,address,building_id,username) VALUES (4, 'Diane Employee', 'diane@employee.com', 'c/Employee 4', null, 'employee4');
 
+INSERT INTO users(username,password,enabled) VALUES ('employee5','employee5',TRUE);
+INSERT INTO authorities(id,username,authority) VALUES (9,'employee5','employee');
+INSERT INTO employees(id,name,email,address,building_id,username) VALUES (5, 'Ernest Employee', 'ernest@employee.com', 'c/Employee 5', null, 'employee5');
+
+INSERT INTO users(username,password,enabled) VALUES ('employee6','employee6',TRUE);
+INSERT INTO authorities(id,username,authority) VALUES (10,'employee6','employee');
+INSERT INTO employees(id,name,email,address,building_id,username) VALUES (6, 'Fatima Employee', 'fatima@employee.com', 'c/Employee 6', null, 'employee6');
+
+INSERT INTO users(username,password,enabled) VALUES ('employee7','employee7',TRUE);
+INSERT INTO authorities(id,username,authority) VALUES (11,'employee7','employee');
+INSERT INTO employees(id,name,email,address,building_id,username) VALUES (7, 'Gloria Employee', 'gloria@employee.com', 'c/Employee 7', null, 'employee7');
+
+INSERT INTO users(username,password,enabled) VALUES ('employee8','employee8',TRUE);
+INSERT INTO authorities(id,username,authority) VALUES (12,'employee8','employee');
+INSERT INTO employees(id,name,email,address,building_id,username) VALUES (8, 'Hector Employee', 'hector@employee.com', 'c/Employee 8', null, 'employee8');
+
 --------------------------------------------------------------------------------
 -- Buildings
 
