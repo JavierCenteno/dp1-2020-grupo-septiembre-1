@@ -190,12 +190,13 @@ public class TaskController {
 		if (!task.isPresent()) {
 			mav = this.listUnassignedManager();
 			mav.addObject("error", "The task with id " + taskId + " could not be found.");
-		} else if (!task.get().getComplete()) {
+		} else if (task.get().getComplete()) {
 			mav = this.listUnassignedManager();
 			mav.addObject("error", "The task with id " + taskId + " is complete.");
 		} else {
 			mav = new ModelAndView("tasks/selectEmployee");
 			Iterable<Employee> employees = this.employeeService.findNotAssignedToTask(taskId);
+
 			mav.addObject("selections", employees);
 			mav.addObject("taskId", taskId);
 		}
@@ -217,7 +218,7 @@ public class TaskController {
 		} else if (!task.isPresent()) {
 			mav = this.listUnassignedManager();
 			mav.addObject("error", "The task with id " + taskId + " could not be found.");
-		} else if (!task.get().getComplete()) {
+		} else if (task.get().getComplete()) {
 			mav = this.listUnassignedManager();
 			mav.addObject("error", "The task with id " + taskId + " is complete.");
 		} else if (task.get().getEmployees().size() > 0
@@ -251,7 +252,7 @@ public class TaskController {
 		if (!task.isPresent()) {
 			mav = this.listUncompletedManager();
 			mav.addObject("error", "The task with id " + taskId + " could not be found.");
-		} else if (!task.get().getComplete()) {
+		} else if (task.get().getComplete()) {
 			mav = this.listUncompletedManager();
 			mav.addObject("error", "The task with id " + taskId + " is complete.");
 		} else if (task.get().getEmployees().size() == 0) {
@@ -281,7 +282,7 @@ public class TaskController {
 		} else if (!task.isPresent()) {
 			mav = this.listUnassignedManager();
 			mav.addObject("error", "The task with id " + taskId + " could not be found.");
-		} else if (!task.get().getComplete()) {
+		} else if (task.get().getComplete()) {
 			mav = this.listUnassignedManager();
 			mav.addObject("error", "The task with id " + taskId + " is complete.");
 		} else if (task.get().getEmployees().size() == 0) {
