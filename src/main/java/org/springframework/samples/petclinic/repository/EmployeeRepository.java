@@ -11,7 +11,7 @@ public interface EmployeeRepository extends CrudRepository<Employee, Integer> {
 	@Query("select e from Employee e where e.user.username = ?1")
 	Optional<Employee> findByUsername(String username);
 
-	@Query("select e from Employee e where (select t from Task t where t.id = ?1) not in e.tasks")
+	@Query("select e from Employee e where not exists (select distinct ee from Employee ee inner join ee.tasks t where t.id = ?1 and ee.id = e.id)")
 	Iterable<Employee> findNotAssignedToTask(int taskId);
 
 }
