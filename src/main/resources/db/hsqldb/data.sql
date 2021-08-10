@@ -71,7 +71,7 @@ INSERT INTO tools(id,name,building_id,task_id) VALUES (4,'tool4',2,null);
 --------------------------------------------------------------------------------
 -- Tasks
 
-INSERT INTO tasks(id,income,name) VALUES (1,1000,'task1');
-INSERT INTO tasks(id,income,name) VALUES (2,2000,'task2');
-INSERT INTO tasks(id,income,name) VALUES (3,3000,'task3');
-INSERT INTO tasks(id,income,name) VALUES (4,4000,'task4');
+INSERT INTO tasks(id,complete,income,name) VALUES (1,false,1000,'task1');
+INSERT INTO tasks(id,complete,income,name) VALUES (2,false,2000,'task2');
+INSERT INTO tasks(id,complete,income,name) VALUES (3,false,3000,'task3');
+INSERT INTO tasks(id,complete,income,name) VALUES (4,false,4000,'task4');
