@@ -254,6 +254,10 @@ public class TaskController {
 		} else if (!task.get().getComplete()) {
 			mav = this.listUncompletedManager();
 			mav.addObject("error", "The task with id " + taskId + " is complete.");
+		} else if (task.get().getEmployees().size() == 0) {
+			mav = this.listUncompletedManager();
+			mav.addObject("error",
+					"The task with id " + taskId + " cannot be assigned tools as it has no employees assigned yet.");
 		} else {
 			mav = new ModelAndView("tasks/selectTool");
 			Iterable<Tool> tools = this.toolService.findNotAssignedToTask(taskId);
