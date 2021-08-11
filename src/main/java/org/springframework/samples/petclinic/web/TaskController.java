@@ -195,7 +195,7 @@ public class TaskController {
 			mav.addObject("error", "The task with id " + taskId + " is complete.");
 		} else {
 			mav = new ModelAndView("tasks/selectEmployee");
-			Iterable<Employee> employees = this.employeeService.findNotAssignedToTask(taskId);
+			Iterable<Employee> employees = this.employeeService.findAssignableToTask(taskId);
 
 			mav.addObject("selections", employees);
 			mav.addObject("taskId", taskId);
@@ -204,7 +204,7 @@ public class TaskController {
 		return mav;
 	}
 
-	@PostMapping(value = "/tasks/{taskId}/assignEmployee/{employeeId}")
+	@GetMapping(value = "/tasks/{taskId}/assignEmployee/{employeeId}")
 	public ModelAndView assignEmployeeManager(@PathVariable("taskId") int taskId,
 			@PathVariable("employeeId") int employeeId) {
 		ModelAndView mav;
@@ -218,6 +218,9 @@ public class TaskController {
 		} else if (!task.isPresent()) {
 			mav = this.listUnassignedManager();
 			mav.addObject("error", "The task with id " + taskId + " could not be found.");
+		} else if (employee.get().getBuilding() == null) {
+			mav = this.listUnassignedManager();
+			mav.addObject("error", "The employee with id " + employeeId + " has no building.");
 		} else if (task.get().getComplete()) {
 			mav = this.listUnassignedManager();
 			mav.addObject("error", "The task with id " + taskId + " is complete.");
@@ -261,7 +264,7 @@ public class TaskController {
 					"The task with id " + taskId + " cannot be assigned tools as it has no employees assigned yet.");
 		} else {
 			mav = new ModelAndView("tasks/selectTool");
-			Iterable<Tool> tools = this.toolService.findNotAssignedToTask(taskId);
+			Iterable<Tool> tools = this.toolService.findAssignableToTask(taskId);
 			mav.addObject("selections", tools);
 			mav.addObject("taskId", taskId);
 		}

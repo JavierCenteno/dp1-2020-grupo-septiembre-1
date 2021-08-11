@@ -1,10 +1,12 @@
 package org.springframework.samples.petclinic.service;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.model.Employee;
+import org.springframework.samples.petclinic.model.Task;
 import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,9 @@ public class EmployeeService {
 
 	@Autowired
 	private AuthoritiesService authoritiesService;
+
+	@Autowired
+	private TaskService taskService;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Constructor
@@ -51,6 +56,30 @@ public class EmployeeService {
 	@Transactional(readOnly = true)
 	public Iterable<Employee> findNotAssignedToTask(int taskId) throws DataAccessException {
 		return this.employeeRepository.findNotAssignedToTask(taskId);
+	}
+
+	@Transactional(readOnly = true)
+	public Iterable<Employee> findNotAssignedToTaskInBuilding(int taskId, int buildingId) throws DataAccessException {
+		return this.employeeRepository.findNotAssignedToTaskInBuilding(taskId, buildingId);
+	}
+
+	@Transactional(readOnly = true)
+	public Iterable<Employee> findAssignableToTask(int taskId) throws DataAccessException {
+		Optional<Task> task = this.taskService.findTaskById(taskId);
+		if (!task.isPresent()) {
+			return new ArrayList<>();
+		}
+		if (task.get().getComplete()) {
+			return new ArrayList<>();
+		}
+		if (task.get().getEmployees().size() == 0) {
+			Iterable<Employee> notAssignedToTask = this.findNotAssignedToTask(taskId);
+			return notAssignedToTask;
+		} else {
+			int buildingId = task.get().getEmployees().get(0).getBuilding().getId();
+			Iterable<Employee> notAssignedToTaskInBuilding = this.findNotAssignedToTaskInBuilding(taskId, buildingId);
+			return notAssignedToTaskInBuilding;
+		}
 	}
 
 	@Transactional(readOnly = true)

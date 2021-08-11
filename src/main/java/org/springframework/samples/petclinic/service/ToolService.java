@@ -1,9 +1,11 @@
 package org.springframework.samples.petclinic.service;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.samples.petclinic.model.Task;
 import org.springframework.samples.petclinic.model.Tool;
 import org.springframework.samples.petclinic.repository.ToolRepository;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,9 @@ public class ToolService {
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Services
+
+	@Autowired
+	private TaskService taskService;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Constructor
@@ -42,8 +47,25 @@ public class ToolService {
 	}
 
 	@Transactional(readOnly = true)
-	public Iterable<Tool> findNotAssignedToTask(int taskId) throws DataAccessException {
-		return this.toolRepository.findNotAssignedToTask(taskId);
+	public Iterable<Tool> findNotAssignedToTaskInBuilding(int taskId, int buildingId) throws DataAccessException {
+		return this.toolRepository.findNotAssignedToTaskInBuilding(taskId, buildingId);
+	}
+
+	@Transactional(readOnly = true)
+	public Iterable<Tool> findAssignableToTask(int taskId) throws DataAccessException {
+		Optional<Task> task = this.taskService.findTaskById(taskId);
+		if (!task.isPresent()) {
+			return new ArrayList<>();
+		}
+		if (task.get().getComplete()) {
+			return new ArrayList<>();
+		}
+		if (task.get().getEmployees().size() == 0) {
+			return new ArrayList<>();
+		}
+		int buildingId = task.get().getEmployees().get(0).getBuilding().getId();
+		Iterable<Tool> notAssignedToTaskInBuilding = this.findNotAssignedToTaskInBuilding(taskId, buildingId);
+		return notAssignedToTaskInBuilding;
 	}
 
 	@Transactional(readOnly = true)
