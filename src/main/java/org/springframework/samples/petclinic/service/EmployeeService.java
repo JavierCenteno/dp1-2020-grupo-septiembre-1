@@ -54,6 +54,11 @@ public class EmployeeService {
 	}
 
 	@Transactional(readOnly = true)
+	public Iterable<Employee> findNotAssignedToABuilding() throws DataAccessException {
+		return this.employeeRepository.findNotAssignedToABuilding();
+	}
+
+	@Transactional(readOnly = true)
 	public Iterable<Employee> findNotAssignedToTask(int taskId) throws DataAccessException {
 		return this.employeeRepository.findNotAssignedToTask(taskId);
 	}

@@ -105,9 +105,8 @@ public class EmployeeController {
 	@GetMapping("/unassignedEmployees")
 	public ModelAndView unassignedEmployees() {
 		ModelAndView mav = new ModelAndView("employees/unassignedEmployeesList");
-		
-		// TODO
-		
+		Iterable<Employee> employeesNotAssignedToABuilding = this.employeeService.findNotAssignedToABuilding();
+		mav.addObject("selections", employeesNotAssignedToABuilding);
 		return mav;
 	}
 
