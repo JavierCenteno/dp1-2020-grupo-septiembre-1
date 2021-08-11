@@ -9,7 +9,7 @@ public interface ToolRepository extends CrudRepository<Tool, Integer> {
 	@Query("select t from Tool t where t.building.id = ?1")
 	Iterable<Tool> findByBuildingId(int id);
 
-	@Query("select t from Tool t where t.task.id != ?1 and t.building.id == ?2")
+	@Query("select t from Tool t where t.task.id != ?1 and t.building.id = ?2")
 	Iterable<Tool> findNotAssignedToTaskInBuilding(int taskId, int buildingId);
 
 }
