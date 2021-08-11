@@ -99,4 +99,13 @@ public class EmployeeController {
 		return mav;
 	}
 
+	////////////////////////////////////////////////////////////////////////////////
+	// List unassigned employees
+
+	@GetMapping("/unassignedEmployees")
+	public ModelAndView unassignedEmployees() {
+		ModelAndView mav = new ModelAndView("employees/unassignedEmployeesList");
+		return mav;
+	}
+
 }
