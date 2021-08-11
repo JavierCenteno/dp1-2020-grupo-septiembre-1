@@ -141,7 +141,7 @@ public class TaskController {
 	////////////////////////////////////////////////////////////////////////////////
 	// Complete (employee)
 
-	@PostMapping(value = "/myTasks/{taskId}/complete")
+	@GetMapping(value = "/myTasks/{taskId}/complete")
 	public ModelAndView completeEmployee(@PathVariable("taskId") int taskId) {
 		ModelAndView mav;
 
