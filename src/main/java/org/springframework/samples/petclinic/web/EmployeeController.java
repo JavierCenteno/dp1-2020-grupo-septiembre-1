@@ -6,8 +6,10 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.samples.petclinic.model.Building;
 import org.springframework.samples.petclinic.model.Employee;
 import org.springframework.samples.petclinic.service.AuthoritiesService;
+import org.springframework.samples.petclinic.service.BuildingService;
 import org.springframework.samples.petclinic.service.EmployeeService;
 import org.springframework.samples.petclinic.service.UserService;
 import org.springframework.stereotype.Controller;
@@ -29,13 +31,16 @@ public class EmployeeController {
 	// Services
 
 	private final EmployeeService employeeService;
+	private final BuildingService buildingService;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Initializers
 
 	@Autowired
-	public EmployeeController(EmployeeService employeeService, UserService userService, AuthoritiesService authoritiesService) {
+	public EmployeeController(EmployeeService employeeService, UserService userService,
+			AuthoritiesService authoritiesService, BuildingService buildingService) {
 		this.employeeService = employeeService;
+		this.buildingService = buildingService;
 	}
 
 	@InitBinder
@@ -57,8 +62,7 @@ public class EmployeeController {
 	public String processCreationForm(@Valid Employee employee, BindingResult result) {
 		if (result.hasErrors()) {
 			return VIEWS_EMPLOYEE_CREATE_OR_UPDATE_FORM;
-		}
-		else {
+		} else {
 			this.employeeService.saveEmployee(employee);
 			return "redirect:/employees/" + employee.getId();
 		}
@@ -81,8 +85,7 @@ public class EmployeeController {
 			@PathVariable("employeeId") int employeeId) {
 		if (result.hasErrors()) {
 			return VIEWS_EMPLOYEE_CREATE_OR_UPDATE_FORM;
-		}
-		else {
+		} else {
 			employee.setId(employeeId);
 			this.employeeService.saveEmployee(employee);
 			return "redirect:/employees/{employeeId}";
@@ -107,6 +110,55 @@ public class EmployeeController {
 		ModelAndView mav = new ModelAndView("employees/unassignedEmployeesList");
 		Iterable<Employee> employeesNotAssignedToABuilding = this.employeeService.findNotAssignedToABuilding();
 		mav.addObject("selections", employeesNotAssignedToABuilding);
+		return mav;
+	}
+
+	@GetMapping(value = "/unassignedEmployees/{employeeId}/assignBuilding")
+	public ModelAndView unassignedEmployeesAssignBuildingList(@PathVariable("employeeId") int employeeId) {
+		ModelAndView mav;
+
+		Optional<Employee> employee = this.employeeService.findEmployeeById(employeeId);
+
+		if (!employee.isPresent()) {
+			mav = this.unassignedEmployees();
+			mav.addObject("error", "The employee with id " + employeeId + " could not be found.");
+		} else {
+			mav = new ModelAndView("employees/selectBuilding");
+			Iterable<Building> buildings = this.buildingService.findAll();
+			mav.addObject("selections", buildings);
+			mav.addObject("employeeId", employeeId);
+		}
+
+		return mav;
+	}
+
+	@PostMapping(value = "/unassignedEmployees/{employeeId}/assignBuilding/{buildingId}")
+	public ModelAndView unassignedEmployeesAssignBuilding(@PathVariable("employeeId") int employeeId,
+			@PathVariable("buildingId") int buildingId) {
+		ModelAndView mav;
+
+		Optional<Employee> employee = this.employeeService.findEmployeeById(employeeId);
+		Optional<Building> building = this.buildingService.findBuildingById(buildingId);
+
+		if (!employee.isPresent()) {
+			mav = this.unassignedEmployees();
+			mav.addObject("error", "The employee with id " + employeeId + " could not be found.");
+		} else if (!building.isPresent()) {
+			mav = this.unassignedEmployees();
+			mav.addObject("error", "The building with id " + buildingId + " could not be found.");
+		} else if (employee.get().getBuilding() != null) {
+			mav = this.unassignedEmployees();
+			mav.addObject("error", "The employee with id " + employeeId + " already has a building.");
+		} else {
+			Employee employeeInternal = employee.get();
+			Building buildingInternal = building.get();
+			buildingInternal.addEmployee(employeeInternal);
+			this.buildingService.saveBuilding(buildingInternal);
+			employeeInternal.setBuilding(buildingInternal);
+			this.employeeService.saveEmployee(employeeInternal);
+			mav = this.unassignedEmployees();
+		}
+
 		return mav;
 	}
 
