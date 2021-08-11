@@ -272,7 +272,7 @@ public class TaskController {
 		return mav;
 	}
 
-	@PostMapping(value = "/tasks/{taskId}/assignTool/{toolId}")
+	@GetMapping(value = "/tasks/{taskId}/assignTool/{toolId}")
 	public ModelAndView assignToolManager(@PathVariable("taskId") int taskId, @PathVariable("toolId") int toolId) {
 		ModelAndView mav;
 

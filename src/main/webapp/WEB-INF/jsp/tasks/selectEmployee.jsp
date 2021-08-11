@@ -23,9 +23,7 @@
 			<c:forEach items="${selections}" var="employee">
 				<tr>
 					<td>
-						<form action="/tasks/${taskId}/assignEmployee/${employee.id}" method="post">
-							<input type="submit" name="select" value="${employee.name}" />
-						</form>
+						<a href="/tasks/${taskId}/assignEmployee/${employee.id}">${employee.name}</a>
 					</td>
 				</tr>
 			</c:forEach>

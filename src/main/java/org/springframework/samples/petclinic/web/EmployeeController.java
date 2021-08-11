@@ -132,7 +132,7 @@ public class EmployeeController {
 		return mav;
 	}
 
-	@PostMapping(value = "/unassignedEmployees/{employeeId}/assignBuilding/{buildingId}")
+	@GetMapping(value = "/unassignedEmployees/{employeeId}/assignBuilding/{buildingId}")
 	public ModelAndView unassignedEmployeesAssignBuilding(@PathVariable("employeeId") int employeeId,
 			@PathVariable("buildingId") int buildingId) {
 		ModelAndView mav;
