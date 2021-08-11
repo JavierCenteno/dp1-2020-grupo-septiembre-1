@@ -11,7 +11,7 @@
 		<div style="color: firebrick; font-weight: bold;">${error}</div>
 	</c:if>
 
-	<h2>Unassigned Tasks</h2>
+	<h2>Tasks</h2>
 
 	<table id="tasksTable" class="table table-striped">
 		<thead>
