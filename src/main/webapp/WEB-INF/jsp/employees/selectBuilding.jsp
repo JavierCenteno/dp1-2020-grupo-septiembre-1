@@ -23,7 +23,7 @@
 			<c:forEach items="${selections}" var="building">
 				<tr>
 					<td>
-						<a href="/unassignedEmployees/${employeeId}/assignBuilding/${building.id}">${building.name}"</a>
+						<a href="/unassignedEmployees/${employeeId}/assignBuilding/${building.id}">${building.name}</a>
 					</td>
 				</tr>
 			</c:forEach>
