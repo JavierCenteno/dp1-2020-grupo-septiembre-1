@@ -141,6 +141,7 @@ public class TaskController {
 	////////////////////////////////////////////////////////////////////////////////
 	// Complete (employee)
 
+	// Debería ser POST
 	@GetMapping(value = "/myTasks/{taskId}/complete")
 	public ModelAndView completeEmployee(@PathVariable("taskId") int taskId) {
 		ModelAndView mav;
@@ -204,6 +205,7 @@ public class TaskController {
 		return mav;
 	}
 
+	// Debería ser POST
 	@GetMapping(value = "/tasks/{taskId}/assignEmployee/{employeeId}")
 	public ModelAndView assignEmployeeManager(@PathVariable("taskId") int taskId,
 			@PathVariable("employeeId") int employeeId) {
@@ -272,6 +274,7 @@ public class TaskController {
 		return mav;
 	}
 
+	// Debería ser POST
 	@GetMapping(value = "/tasks/{taskId}/assignTool/{toolId}")
 	public ModelAndView assignToolManager(@PathVariable("taskId") int taskId, @PathVariable("toolId") int toolId) {
 		ModelAndView mav;
