@@ -12,6 +12,7 @@
 		<thead>
 			<tr>
 				<th style="width: 150px;">Name</th>
+				<th style="width: 150px;">Actions</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -22,8 +23,7 @@
 							<spring:param name="employeeId" value="${employee.id}" />
 						</spring:url> <a href="${fn:escapeXml(employeeUrl)}"><c:out
 								value="${employee.name}" /></a></td>
-					<td><c:out value="${employee.email}" /></td>
-					<td><c:out value="${employee.address}" /></td>
+					<td><a href="/unassignedEmployees/${employee.id}/assignBuilding">Assign to a Building</a></td>
 				</tr>
 			</c:forEach>
 		</tbody>
