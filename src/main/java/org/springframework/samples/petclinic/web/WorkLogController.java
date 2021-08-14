@@ -89,6 +89,7 @@ public class WorkLogController {
 			mav.addObject("error", "The task with id " + taskId + " can't have more than 8 hours logged in (currently: "
 					+ totalHours + ", you attempted to add " + workLog.getHours() + ").");
 		} else {
+			workLog.setDate(new Date());
 			this.workLogService.saveWorkLog(workLog);
 			Task taskInternal = task.get();
 			taskInternal.addWorkLog(workLog);
