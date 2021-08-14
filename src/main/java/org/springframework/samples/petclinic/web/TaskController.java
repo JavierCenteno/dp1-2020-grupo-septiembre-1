@@ -160,6 +160,9 @@ public class TaskController {
 			mav = this.listEmployee();
 			mav.addObject("error", "The task with id " + taskId + " doesn't belong to the employee with id "
 					+ employee.get().getId() + ".");
+		} else if (task.get().getComplete()) {
+			mav = this.listEmployee();
+			mav.addObject("error", "The task with id " + taskId + " is already complete.");
 		} else {
 			mav = this.listEmployee();
 			Task taskInternal = task.get();

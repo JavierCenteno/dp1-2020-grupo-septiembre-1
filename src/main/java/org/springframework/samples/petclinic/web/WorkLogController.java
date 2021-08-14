@@ -53,9 +53,32 @@ public class WorkLogController {
 	public ModelAndView initCreationFormManager(@PathVariable("taskId") int taskId) {
 		ModelAndView mav;
 
-		mav = new ModelAndView("workLogs/createOrUpdateWorkLogForm");
-		WorkLog workLog = new WorkLog();
-		mav.addObject("workLog", workLog);
+		Optional<Employee> employee = this.employeeService.findEmployeePrincipal();
+		Optional<Task> task = this.taskService.findTaskById(taskId);
+		Integer totalHours = this.workLogService.findHoursLoggedIntoTaskByEmployeeAtDate(taskId, employee.get().getId(),
+				new Date());
+		if (!employee.isPresent()) {
+			// No *debería* ser posible
+			// El usuario necesita la autoridad "employee" para llegar aquí
+			mav = new ModelAndView("redirect:/");
+		} else if (!task.isPresent()) {
+			mav = this.taskController.listEmployee();
+			mav.addObject("error", "The task with id " + taskId + " could not be found.");
+		} else if (!task.get().getEmployees().contains(employee.get())) {
+			mav = this.taskController.listEmployee();
+			mav.addObject("error", "The task with id " + taskId + " is not assigned to the employee.");
+		} else if (task.get().getComplete()) {
+			mav = this.taskController.listEmployee();
+			mav.addObject("error", "The task with id " + taskId + " is already complete.");
+		} else if (totalHours != null ? totalHours >= 8 : false) {
+			mav = this.taskController.listEmployee();
+			mav.addObject("error", "The task with id " + taskId + " can't have more than 8 hours logged in by the employee today (currently: "
+					+ totalHours + ").");
+		} else {
+			mav = new ModelAndView("workLogs/createOrUpdateWorkLogForm");
+			WorkLog workLog = new WorkLog();
+			mav.addObject("workLog", workLog);
+		}
 
 		return mav;
 	}
@@ -86,7 +109,7 @@ public class WorkLogController {
 			mav = new ModelAndView("tasks/createOrUpdateWorkLogForm");
 		} else if (totalHours != null ? totalHours + workLog.getHours() > 8 : false) {
 			mav = this.taskController.listEmployee();
-			mav.addObject("error", "The task with id " + taskId + " can't have more than 8 hours logged in (currently: "
+			mav.addObject("error", "The task with id " + taskId + " can't have more than 8 hours logged in by the employee today (currently: "
 					+ totalHours + ", you attempted to add " + workLog.getHours() + ").");
 		} else {
 			workLog.setDate(new Date());
