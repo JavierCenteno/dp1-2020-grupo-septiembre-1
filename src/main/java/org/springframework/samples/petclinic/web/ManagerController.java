@@ -11,7 +11,6 @@ import org.springframework.samples.petclinic.service.AuthoritiesService;
 import org.springframework.samples.petclinic.service.ManagerService;
 import org.springframework.samples.petclinic.service.UserService;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +22,7 @@ public class ManagerController {
 	////////////////////////////////////////////////////////////////////////////////
 	// URIs
 
-	private static final String VIEWS_EMPLOYEE_CREATE_OR_UPDATE_FORM = "manager/createOrUpdateManagerForm";
+	private static final String VIEWS_EMPLOYEE_CREATE_OR_UPDATE_FORM = "managers/createOrUpdateManagerForm";
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Services
@@ -34,7 +33,8 @@ public class ManagerController {
 	// Initializers
 
 	@Autowired
-	public ManagerController(ManagerService managerService, UserService userService, AuthoritiesService authoritiesService) {
+	public ManagerController(ManagerService managerService, UserService userService,
+			AuthoritiesService authoritiesService) {
 		this.managerService = managerService;
 	}
 
@@ -57,8 +57,7 @@ public class ManagerController {
 	public String processCreationForm(@Valid Manager manager, BindingResult result) {
 		if (result.hasErrors()) {
 			return VIEWS_EMPLOYEE_CREATE_OR_UPDATE_FORM;
-		}
-		else {
+		} else {
 			this.managerService.saveManager(manager);
 			return "redirect:/managers/" + manager.getId();
 		}
@@ -67,10 +66,11 @@ public class ManagerController {
 	////////////////////////////////////////////////////////////////////////////////
 	// Update
 
+	/*
 	@GetMapping(value = "/managers/{managerId}/edit")
 	public String initUpdateManagerForm(@PathVariable("managerId") int managerId, Model model) {
 		Optional<Manager> optionalManager = this.managerService.findManagerById(managerId);
-		// TODO: what if manager doesn't exist?
+		// TO DO: what if manager doesn't exist?
 		Manager manager = optionalManager.get();
 		model.addAttribute(manager);
 		return VIEWS_EMPLOYEE_CREATE_OR_UPDATE_FORM;
@@ -81,21 +81,43 @@ public class ManagerController {
 			@PathVariable("managerId") int managerId) {
 		if (result.hasErrors()) {
 			return VIEWS_EMPLOYEE_CREATE_OR_UPDATE_FORM;
-		}
-		else {
+		} else {
 			manager.setId(managerId);
 			this.managerService.saveManager(manager);
 			return "redirect:/managers/{managerId}";
 		}
 	}
+	*/
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Show
 
-	@GetMapping("/managers/{managerId}")
+	@GetMapping(value = "/managers/{managerId}")
 	public ModelAndView showManager(@PathVariable("managerId") int managerId) {
-		ModelAndView mav = new ModelAndView("managers/managerDetails");
-		mav.addObject(this.managerService.findManagerById(managerId));
+		ModelAndView mav;
+
+		Optional<Manager> manager = this.managerService.findManagerById(managerId);
+		if (!manager.isPresent()) {
+			mav = list();
+			mav.addObject("error", "The manager with id " + managerId + " could not be found.");
+		} else {
+			mav = new ModelAndView("managers/managerDetails");
+			mav.addObject("manager", manager.get());
+		}
+
+		return mav;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	// List
+
+	@GetMapping(value = "/managers")
+	public ModelAndView list() {
+		ModelAndView mav = new ModelAndView("managers/managersList");
+
+		Iterable<Manager> allManagers = this.managerService.findAll();
+		mav.addObject("selections", allManagers);
+
 		return mav;
 	}
 

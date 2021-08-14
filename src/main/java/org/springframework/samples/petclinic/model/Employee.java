@@ -33,6 +33,10 @@ public class Employee extends Actor {
 		return this.user;
 	}
 
+	public void setUser(User user) {
+		this.user = user;
+	}
+
 	////////////////////////////////////////////////////////////////////////////////
 	// Building
 

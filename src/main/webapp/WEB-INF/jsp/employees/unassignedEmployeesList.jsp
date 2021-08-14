@@ -6,6 +6,11 @@
 <%@ taglib prefix="petclinic" tagdir="/WEB-INF/tags"%>
 
 <petclinic:layout pageName="employees">
+
+	<c:if test="${not empty error}">
+		<div style="color: firebrick; font-weight: bold;">${error}</div>
+	</c:if>
+
 	<h2>Employees</h2>
 
 	<table id="employeesTable" class="table table-striped">

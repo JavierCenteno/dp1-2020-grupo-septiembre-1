@@ -13,7 +13,6 @@ import org.springframework.samples.petclinic.service.BuildingService;
 import org.springframework.samples.petclinic.service.EmployeeService;
 import org.springframework.samples.petclinic.service.UserService;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +24,7 @@ public class EmployeeController {
 	////////////////////////////////////////////////////////////////////////////////
 	// URIs
 
-	private static final String VIEWS_EMPLOYEE_CREATE_OR_UPDATE_FORM = "employee/createOrUpdateEmployeeForm";
+	private static final String VIEWS_EMPLOYEE_CREATE_OR_UPDATE_FORM = "employees/createOrUpdateEmployeeForm";
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Services
@@ -71,10 +70,11 @@ public class EmployeeController {
 	////////////////////////////////////////////////////////////////////////////////
 	// Update
 
+	/*
 	@GetMapping(value = "/employees/{employeeId}/edit")
 	public String initUpdateEmployeeForm(@PathVariable("employeeId") int employeeId, Model model) {
 		Optional<Employee> optionalEmployee = this.employeeService.findEmployeeById(employeeId);
-		// TODO: what if employee doesn't exist?
+		// TO DO: what if employee doesn't exist?
 		Employee employee = optionalEmployee.get();
 		model.addAttribute(employee);
 		return VIEWS_EMPLOYEE_CREATE_OR_UPDATE_FORM;
@@ -91,21 +91,44 @@ public class EmployeeController {
 			return "redirect:/employees/{employeeId}";
 		}
 	}
+	*/
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Show
 
-	@GetMapping("/employees/{employeeId}")
+	@GetMapping(value = "/employees/{employeeId}")
 	public ModelAndView showEmployee(@PathVariable("employeeId") int employeeId) {
-		ModelAndView mav = new ModelAndView("employees/employeeDetails");
-		mav.addObject(this.employeeService.findEmployeeById(employeeId));
+		ModelAndView mav;
+
+		Optional<Employee> employee = this.employeeService.findEmployeeById(employeeId);
+		if (!employee.isPresent()) {
+			mav = list();
+			mav.addObject("error", "The employee with id " + employeeId + " could not be found.");
+		} else {
+			mav = new ModelAndView("employees/employeeDetails");
+			mav.addObject("employee", employee.get());
+		}
+
+		return mav;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	// List
+
+	@GetMapping(value = "/employees")
+	public ModelAndView list() {
+		ModelAndView mav = new ModelAndView("employees/employeesList");
+
+		Iterable<Employee> allEmployees = this.employeeService.findAll();
+		mav.addObject("selections", allEmployees);
+
 		return mav;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
 	// List unassigned employees
 
-	@GetMapping("/unassignedEmployees")
+	@GetMapping(value = "/unassignedEmployees")
 	public ModelAndView unassignedEmployees() {
 		ModelAndView mav = new ModelAndView("employees/unassignedEmployeesList");
 		Iterable<Employee> employeesNotAssignedToABuilding = this.employeeService.findNotAssignedToABuilding();
