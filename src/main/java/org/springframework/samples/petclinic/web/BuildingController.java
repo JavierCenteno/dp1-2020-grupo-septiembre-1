@@ -87,6 +87,7 @@ public class BuildingController {
 		if (result.hasErrors()) {
 			mav = new ModelAndView("buildings/createOrUpdateBuildingForm");
 		} else {
+			building.setIncome(0);
 			this.buildingService.saveBuilding(building);
 			mav = new ModelAndView("redirect:/buildings/" + building.getId());
 		}
