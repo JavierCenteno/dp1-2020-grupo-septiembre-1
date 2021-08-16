@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.configuration.SecurityConfiguration;
 import org.springframework.samples.petclinic.model.Building;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -88,6 +90,17 @@ class BuildingControllerTests {
 				.andExpect(model().attributeHasFieldErrors("building", "name"))
 				.andExpect(model().attributeHasFieldErrors("building", "address"))
 				.andExpect(view().name("buildings/createOrUpdateBuildingForm"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testShowBuilding() throws Exception {
+		mockMvc.perform(get("/buildings/{buildingId}", BUILDING_OWNER_ID))
+				// result
+				.andExpect(status().isOk())
+				.andExpect(model().attribute("building", hasProperty("name", is("Building"))))
+				.andExpect(model().attribute("building", hasProperty("address", is("c/Building"))))
+				.andExpect(view().name("buildings/buildingDetails"));
 	}
 
 }
