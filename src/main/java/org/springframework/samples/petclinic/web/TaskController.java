@@ -110,6 +110,7 @@ public class TaskController {
 		if (result.hasErrors()) {
 			mav = new ModelAndView("tasks/createOrUpdateTaskForm");
 		} else {
+			task.setComplete(false);
 			this.taskService.saveTask(task);
 			mav = new ModelAndView("redirect:/uncompleteTasks/" + task.getId());
 		}
