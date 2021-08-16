@@ -41,6 +41,7 @@ public class WorkLogController {
 	@InitBinder
 	public void setAllowedFields(WebDataBinder dataBinder) {
 		dataBinder.setDisallowedFields("id");
+		dataBinder.setDisallowedFields("date");
 	}
 
 	////////////////////////////////////////////////////////////////////////////////

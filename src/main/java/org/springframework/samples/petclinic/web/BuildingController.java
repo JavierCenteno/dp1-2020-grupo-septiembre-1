@@ -32,6 +32,7 @@ public class BuildingController {
 	@InitBinder
 	public void setAllowedFields(WebDataBinder dataBinder) {
 		dataBinder.setDisallowedFields("id");
+		dataBinder.setDisallowedFields("income");
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
