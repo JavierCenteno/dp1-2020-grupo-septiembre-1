@@ -26,18 +26,15 @@ public class WorkLogController {
 
 	private final WorkLogService workLogService;
 	private final TaskService taskService;
-	private final TaskController taskController;
 	private final EmployeeService employeeService;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Initializers
 
 	@Autowired
-	public WorkLogController(WorkLogService workLogService, TaskService taskService, TaskController taskController,
-			EmployeeService employeeService) {
+	public WorkLogController(WorkLogService workLogService, TaskService taskService, EmployeeService employeeService) {
 		this.workLogService = workLogService;
 		this.taskService = taskService;
-		this.taskController = taskController;
 		this.employeeService = employeeService;
 	}
 
@@ -62,16 +59,16 @@ public class WorkLogController {
 			// El usuario necesita la autoridad "employee" para llegar aquí
 			mav = new ModelAndView("redirect:/");
 		} else if (!task.isPresent()) {
-			mav = this.taskController.listEmployee();
+			mav = new ModelAndView("welcome");
 			mav.addObject("error", "The task with id " + taskId + " could not be found.");
 		} else if (!task.get().getEmployees().contains(employee.get())) {
-			mav = this.taskController.listEmployee();
+			mav = new ModelAndView("welcome");
 			mav.addObject("error", "The task with id " + taskId + " is not assigned to the employee.");
 		} else if (task.get().getComplete()) {
-			mav = this.taskController.listEmployee();
+			mav = new ModelAndView("welcome");
 			mav.addObject("error", "The task with id " + taskId + " is already complete.");
 		} else if (totalHours != null ? totalHours >= 8 : false) {
-			mav = this.taskController.listEmployee();
+			mav = new ModelAndView("welcome");
 			mav.addObject("error", "The task with id " + taskId + " can't have more than 8 hours logged in by the employee today (currently: "
 					+ totalHours + ").");
 		} else {
@@ -97,18 +94,18 @@ public class WorkLogController {
 			// El usuario necesita la autoridad "employee" para llegar aquí
 			mav = new ModelAndView("redirect:/");
 		} else if (!task.isPresent()) {
-			mav = this.taskController.listEmployee();
+			mav = new ModelAndView("welcome");
 			mav.addObject("error", "The task with id " + taskId + " could not be found.");
 		} else if (!task.get().getEmployees().contains(employee.get())) {
-			mav = this.taskController.listEmployee();
+			mav = new ModelAndView("welcome");
 			mav.addObject("error", "The task with id " + taskId + " is not assigned to the employee.");
 		} else if (task.get().getComplete()) {
-			mav = this.taskController.listEmployee();
+			mav = new ModelAndView("welcome");
 			mav.addObject("error", "The task with id " + taskId + " is already complete.");
 		} else if (result.hasErrors()) {
 			mav = new ModelAndView("tasks/createOrUpdateWorkLogForm");
 		} else if (totalHours != null ? totalHours + workLog.getHours() > 8 : false) {
-			mav = this.taskController.listEmployee();
+			mav = new ModelAndView("welcome");
 			mav.addObject("error", "The task with id " + taskId + " can't have more than 8 hours logged in by the employee today (currently: "
 					+ totalHours + ", you attempted to add " + workLog.getHours() + ").");
 		} else {

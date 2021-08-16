@@ -25,11 +25,6 @@ public class ToolController {
 	private final BuildingService buildingService;
 
 	////////////////////////////////////////////////////////////////////////////////
-	// Controllers
-
-	private final BuildingController buildingController;
-
-	////////////////////////////////////////////////////////////////////////////////
 	// Initializers
 
 	@Autowired
@@ -37,7 +32,6 @@ public class ToolController {
 			BuildingController buildingController) {
 		this.toolService = toolService;
 		this.buildingService = buildingService;
-		this.buildingController = buildingController;
 	}
 
 	@InitBinder
@@ -50,11 +44,18 @@ public class ToolController {
 
 	@GetMapping(value = "/buildings/{buildingId}/tools")
 	public ModelAndView list(@PathVariable("buildingId") int buildingId) {
-		ModelAndView mav = new ModelAndView("tools/toolsList");
+		ModelAndView mav;
 
-		Iterable<Tool> allTools = this.toolService.findByBuildingId(buildingId);
-		mav.addObject("selections", allTools);
-		mav.addObject("buildingId", buildingId);
+		Optional<Building> building = this.buildingService.findBuildingById(buildingId);
+		if (!building.isPresent()) {
+			mav = new ModelAndView("welcome");
+			mav.addObject("error", "The building with id " + buildingId + " could not be found.");
+		} else {
+			mav = new ModelAndView("tools/toolsList");
+			Iterable<Tool> allTools = this.toolService.findByBuildingId(buildingId);
+			mav.addObject("selections", allTools);
+			mav.addObject("buildingId", buildingId);
+		}
 
 		return mav;
 	}
@@ -69,7 +70,7 @@ public class ToolController {
 		Optional<Tool> tool = this.toolService.findToolById(toolId);
 		Optional<Building> building = this.buildingService.findBuildingById(buildingId);
 		if (!building.isPresent()) {
-			mav = this.buildingController.list();
+			mav = new ModelAndView("welcome");
 			mav.addObject("error", "The building with id " + buildingId + " could not be found.");
 		} else if (!tool.isPresent()) {
 			mav = this.list(buildingId);
@@ -95,7 +96,7 @@ public class ToolController {
 
 		Optional<Building> building = this.buildingService.findBuildingById(buildingId);
 		if (!building.isPresent()) {
-			mav = this.buildingController.list();
+			mav = new ModelAndView("welcome");
 			mav.addObject("error", "The building with id " + buildingId + " could not be found.");
 		} else {
 			mav = new ModelAndView("tools/createOrUpdateToolForm");
@@ -114,7 +115,7 @@ public class ToolController {
 
 		Optional<Building> building = this.buildingService.findBuildingById(buildingId);
 		if (!building.isPresent()) {
-			mav = this.buildingController.list();
+			mav = new ModelAndView("welcome");
 			mav.addObject("error", "The building with id " + buildingId + " could not be found.");
 		} else if (result.hasErrors()) {
 			mav = new ModelAndView("tools/createOrUpdateToolForm");
