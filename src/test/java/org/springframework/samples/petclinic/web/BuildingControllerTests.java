@@ -30,7 +30,7 @@ class BuildingControllerTests {
 	////////////////////////////////////////////////////////////////////////////////
 	// Initialize
 
-	private static final int BUILDING_OWNER_ID = 1;
+	private static final int BUILDING_ID = 1;
 
 	// @Autowired
 	// private BuildingController buildingController;
@@ -46,11 +46,11 @@ class BuildingControllerTests {
 	@BeforeEach
 	void setup() {
 		building = new Building();
-		building.setId(BUILDING_OWNER_ID);
+		building.setId(BUILDING_ID);
 		building.setName("Building");
 		building.setAddress("c/Building");
 		building.setIncome(0);
-		given(this.buildingService.findBuildingById(BUILDING_OWNER_ID)).willReturn(Optional.of(building));
+		given(this.buildingService.findBuildingById(BUILDING_ID)).willReturn(Optional.of(building));
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -71,7 +71,7 @@ class BuildingControllerTests {
 	@WithMockUser(value = "spring")
 	@Test
 	void testShowBuilding() throws Exception {
-		mockMvc.perform(get("/buildings/{buildingId}", BUILDING_OWNER_ID))
+		mockMvc.perform(get("/buildings/{buildingId}", BUILDING_ID))
 				// result
 				.andExpect(status().isOk())
 				.andExpect(model().attribute("building", hasProperty("name", is("Building"))))
