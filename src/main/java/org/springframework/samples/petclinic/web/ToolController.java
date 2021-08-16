@@ -28,8 +28,7 @@ public class ToolController {
 	// Initializers
 
 	@Autowired
-	public ToolController(ToolService toolService, BuildingService buildingService,
-			BuildingController buildingController) {
+	public ToolController(ToolService toolService, BuildingService buildingService) {
 		this.toolService = toolService;
 		this.buildingService = buildingService;
 	}
