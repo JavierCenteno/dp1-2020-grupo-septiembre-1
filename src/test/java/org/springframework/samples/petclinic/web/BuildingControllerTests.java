@@ -54,7 +54,33 @@ class BuildingControllerTests {
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
-	// Tests
+	// Tests: List
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testListBuildings() throws Exception {
+		mockMvc.perform(get("/buildings"))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("selections"))
+				.andExpect(view().name("buildings/buildingsList"));
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Tests: Show
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testShowBuilding() throws Exception {
+		mockMvc.perform(get("/buildings/{buildingId}", BUILDING_OWNER_ID))
+				// result
+				.andExpect(status().isOk())
+				.andExpect(model().attribute("building", hasProperty("name", is("Building"))))
+				.andExpect(model().attribute("building", hasProperty("address", is("c/Building"))))
+				.andExpect(view().name("buildings/buildingDetails"));
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Tests: Create
 
 	@WithMockUser(value = "spring")
 	@Test
@@ -90,17 +116,6 @@ class BuildingControllerTests {
 				.andExpect(model().attributeHasFieldErrors("building", "name"))
 				.andExpect(model().attributeHasFieldErrors("building", "address"))
 				.andExpect(view().name("buildings/createOrUpdateBuildingForm"));
-	}
-
-	@WithMockUser(value = "spring")
-	@Test
-	void testShowBuilding() throws Exception {
-		mockMvc.perform(get("/buildings/{buildingId}", BUILDING_OWNER_ID))
-				// result
-				.andExpect(status().isOk())
-				.andExpect(model().attribute("building", hasProperty("name", is("Building"))))
-				.andExpect(model().attribute("building", hasProperty("address", is("c/Building"))))
-				.andExpect(view().name("buildings/buildingDetails"));
 	}
 
 }
