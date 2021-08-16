@@ -129,7 +129,8 @@ public class TaskController {
 		if (!employee.isPresent()) {
 			// No *debería* ser posible
 			// El usuario necesita la autoridad "employee" para llegar aquí
-			mav = new ModelAndView("redirect:/");
+			mav = new ModelAndView("welcome");
+			mav.addObject("error", "The employee currently logged in could not be found.");
 		} else {
 			mav = new ModelAndView("myTasks/tasksList");
 			Iterable<Task> tasks = this.taskService.findAssignedToEmployeeAndNotComplete(employee.get().getId());
@@ -153,7 +154,8 @@ public class TaskController {
 		if (!employee.isPresent()) {
 			// No *debería* ser posible
 			// El usuario necesita la autoridad "employee" para llegar aquí
-			mav = new ModelAndView("redirect:/");
+			mav = new ModelAndView("welcome");
+			mav.addObject("error", "The employee currently logged in could not be found.");
 		} else if (!task.isPresent()) {
 			mav = this.listEmployee();
 			mav.addObject("error", "The task with id " + taskId + " could not be found.");
