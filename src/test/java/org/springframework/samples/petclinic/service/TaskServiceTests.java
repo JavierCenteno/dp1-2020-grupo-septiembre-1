@@ -104,6 +104,29 @@ class TaskServiceTests {
 	}
 
 	@Test
+	void shouldFindAllAssignedToEmployeeAndNotCompleteTasks() {
+		Employee employee1 = this.employeeService.findEmployeeById(1).get();
+		Task task1 = this.taskService.findTaskById(1).get();
+		Collection<Task> tasks;
+		// task1 no tiene empleado asignada aún
+		// así que debe haber 0 tareas asignadas a employee1 y sin completar
+		tasks = this.taskService.findAssignedToEmployeeAndNotComplete(employee1.getId());
+		assertThat(tasks.size()).isEqualTo(0);
+		// task1 tiene ahora employee1 asignada pero no ha sido completada
+		// así que debe haber una tarea más asignada a employee1 y sin completar
+		task1.addEmployee(employee1);
+		this.taskService.saveTask(task1);
+		tasks = this.taskService.findAssignedToEmployeeAndNotComplete(employee1.getId());
+		assertThat(tasks.size()).isEqualTo(1);
+		// task1 tiene ahora employee1 asignada y ha sido completada
+		// así que debe haber una tarea menos asignada a employee1 y sin completar
+		task1.setComplete(true);
+		this.taskService.saveTask(task1);
+		tasks = this.taskService.findAssignedToEmployeeAndNotComplete(employee1.getId());
+		assertThat(tasks.size()).isEqualTo(0);
+	}
+
+	@Test
 	void shouldFindTaskWithCorrectId() {
 		Optional<Task> task = this.taskService.findTaskById(1);
 		assertThat(task.get()).isNotNull();
