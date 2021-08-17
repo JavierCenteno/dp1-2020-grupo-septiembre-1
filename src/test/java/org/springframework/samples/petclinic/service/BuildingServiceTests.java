@@ -12,6 +12,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.samples.petclinic.model.Building;
 import org.springframework.samples.petclinic.util.EntityUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
 class BuildingServiceTests {
@@ -49,6 +50,17 @@ class BuildingServiceTests {
 		assertThat(building.get()).isNotNull();
 		assertThat(building.get().getName()).isEqualTo("building1");
 		assertThat(building.get().getAddress()).isEqualTo("c/Building 1");
+	}
+
+	@Test
+	@Transactional
+	public void shouldInsertBuildingIntoDatabaseAndGenerateId() {
+		Building building = new Building();
+		building.setName("building5");
+		building.setAddress("c/Building 5");
+		building.setIncome(0);
+		this.buildingService.saveBuilding(building);
+		assertThat(building.getId()).isNotNull();
 	}
 
 }
