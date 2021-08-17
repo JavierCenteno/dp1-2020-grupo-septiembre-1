@@ -232,6 +232,10 @@ public class TaskController {
 		} else if (task.get().getComplete()) {
 			mav = this.listUnassignedManager();
 			mav.addObject("error", "The task with id " + taskId + " is complete.");
+		} else if (task.get().getEmployees().contains(employee.get())) {
+			mav = this.listUnassignedManager();
+			mav.addObject("error",
+					"The task with id " + taskId + " already has the employee with id " + employeeId + ".");
 		} else if (task.get().getEmployees().size() > 0
 				? !task.get().getEmployees().get(0).getBuilding().equals(employee.get().getBuilding())
 				: false) {
@@ -291,6 +295,9 @@ public class TaskController {
 		if (!tool.isPresent()) {
 			mav = this.listUnassignedManager();
 			mav.addObject("error", "The tool with id " + toolId + " could not be found.");
+		} else if (tool.get().getTask() != null) {
+			mav = this.listUnassignedManager();
+			mav.addObject("error", "The tool with id " + toolId + " already has a task.");
 		} else if (!task.isPresent()) {
 			mav = this.listUnassignedManager();
 			mav.addObject("error", "The task with id " + taskId + " could not be found.");
