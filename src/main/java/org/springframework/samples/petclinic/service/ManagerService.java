@@ -1,5 +1,7 @@
 package org.springframework.samples.petclinic.service;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,8 +61,12 @@ public class ManagerService {
 	}
 
 	@Transactional(readOnly = true)
-	public Iterable<Manager> findAll() {
-		return this.managerRepository.findAll();
+	public Collection<Manager> findAll() {
+		Collection<Manager> allManagers = new ArrayList<Manager>();
+		for (Manager manager : this.managerRepository.findAll()) {
+			allManagers.add(manager);
+		}
+		return allManagers;
 	}
 
 	@Transactional

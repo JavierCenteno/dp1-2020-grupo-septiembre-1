@@ -1,6 +1,7 @@
 package org.springframework.samples.petclinic.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,17 +43,17 @@ public class ToolService {
 	}
 
 	@Transactional(readOnly = true)
-	public Iterable<Tool> findByBuildingId(int buildingId) throws DataAccessException {
+	public Collection<Tool> findByBuildingId(int buildingId) throws DataAccessException {
 		return this.toolRepository.findByBuildingId(buildingId);
 	}
 
 	@Transactional(readOnly = true)
-	public Iterable<Tool> findNotAssignedToTaskInBuilding(int taskId, int buildingId) throws DataAccessException {
+	public Collection<Tool> findNotAssignedToTaskInBuilding(int taskId, int buildingId) throws DataAccessException {
 		return this.toolRepository.findNotAssignedToTaskInBuilding(taskId, buildingId);
 	}
 
 	@Transactional(readOnly = true)
-	public Iterable<Tool> findAssignableToTask(int taskId) throws DataAccessException {
+	public Collection<Tool> findAssignableToTask(int taskId) throws DataAccessException {
 		Optional<Task> task = this.taskService.findTaskById(taskId);
 		if (!task.isPresent()) {
 			return new ArrayList<>();
@@ -64,13 +65,17 @@ public class ToolService {
 			return new ArrayList<>();
 		}
 		int buildingId = task.get().getEmployees().get(0).getBuilding().getId();
-		Iterable<Tool> notAssignedToTaskInBuilding = this.findNotAssignedToTaskInBuilding(taskId, buildingId);
+		Collection<Tool> notAssignedToTaskInBuilding = this.findNotAssignedToTaskInBuilding(taskId, buildingId);
 		return notAssignedToTaskInBuilding;
 	}
 
 	@Transactional(readOnly = true)
-	public Iterable<Tool> findAll() throws DataAccessException {
-		return this.toolRepository.findAll();
+	public Collection<Tool> findAll() {
+		Collection<Tool> allTools = new ArrayList<Tool>();
+		for (Tool tool : this.toolRepository.findAll()) {
+			allTools.add(tool);
+		}
+		return allTools;
 	}
 
 	@Transactional

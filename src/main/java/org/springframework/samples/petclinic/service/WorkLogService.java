@@ -1,6 +1,8 @@
 package org.springframework.samples.petclinic.service;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
 
@@ -45,13 +47,17 @@ public class WorkLogService {
 	}
 
 	@Transactional(readOnly = true)
-	public Iterable<WorkLog> findByEmployeeAndTask(int employeeId, int taskId) throws DataAccessException {
+	public Collection<WorkLog> findByEmployeeAndTask(int employeeId, int taskId) throws DataAccessException {
 		return this.workLogRepository.findByEmployeeAndTask(employeeId, taskId);
 	}
 
 	@Transactional(readOnly = true)
-	public Iterable<WorkLog> findAll() throws DataAccessException {
-		return this.workLogRepository.findAll();
+	public Collection<WorkLog> findAll() {
+		Collection<WorkLog> allWorkLogs = new ArrayList<WorkLog>();
+		for (WorkLog workLog : this.workLogRepository.findAll()) {
+			allWorkLogs.add(workLog);
+		}
+		return allWorkLogs;
 	}
 
 	@Transactional(readOnly = true)

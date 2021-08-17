@@ -1,5 +1,7 @@
 package org.springframework.samples.petclinic.service;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,28 +39,32 @@ public class TaskService {
 	}
 
 	@Transactional(readOnly = true)
-	public Iterable<Task> findUnassigned() throws DataAccessException {
+	public Collection<Task> findUnassigned() throws DataAccessException {
 		return this.taskRepository.findUnassigned();
 	}
 
 	@Transactional(readOnly = true)
-	public Iterable<Task> findAssignedAndUncomplete() throws DataAccessException {
+	public Collection<Task> findAssignedAndUncomplete() throws DataAccessException {
 		return this.taskRepository.findAssignedAndUncomplete();
 	}
 
 	@Transactional(readOnly = true)
-	public Iterable<Task> findUncomplete() throws DataAccessException {
+	public Collection<Task> findUncomplete() throws DataAccessException {
 		return this.taskRepository.findUncomplete();
 	}
 
 	@Transactional(readOnly = true)
-	public Iterable<Task> findAssignedToEmployeeAndNotComplete(int employeeId) throws DataAccessException {
+	public Collection<Task> findAssignedToEmployeeAndNotComplete(int employeeId) throws DataAccessException {
 		return this.taskRepository.findAssignedToEmployeeAndNotComplete(employeeId);
 	}
 
 	@Transactional(readOnly = true)
-	public Iterable<Task> findAll() throws DataAccessException {
-		return this.taskRepository.findAll();
+	public Collection<Task> findAll() {
+		Collection<Task> allTasks = new ArrayList<Task>();
+		for (Task task : this.taskRepository.findAll()) {
+			allTasks.add(task);
+		}
+		return allTasks;
 	}
 
 	@Transactional

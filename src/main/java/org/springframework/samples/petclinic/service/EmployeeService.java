@@ -1,10 +1,10 @@
 package org.springframework.samples.petclinic.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.model.Employee;
 import org.springframework.samples.petclinic.model.Task;
 import org.springframework.samples.petclinic.model.User;
@@ -45,32 +45,32 @@ public class EmployeeService {
 	// Methods
 
 	@Transactional(readOnly = true)
-	public Optional<Employee> findEmployeeById(int id) throws DataAccessException {
+	public Optional<Employee> findEmployeeById(int id) {
 		return this.employeeRepository.findById(id);
 	}
 
 	@Transactional(readOnly = true)
-	public Optional<Employee> findEmployeeByUsername(String username) throws DataAccessException {
+	public Optional<Employee> findEmployeeByUsername(String username) {
 		return this.employeeRepository.findByUsername(username);
 	}
 
 	@Transactional(readOnly = true)
-	public Iterable<Employee> findNotAssignedToABuilding() throws DataAccessException {
+	public Collection<Employee> findNotAssignedToABuilding() {
 		return this.employeeRepository.findNotAssignedToABuilding();
 	}
 
 	@Transactional(readOnly = true)
-	public Iterable<Employee> findNotAssignedToTask(int taskId) throws DataAccessException {
+	public Collection<Employee> findNotAssignedToTask(int taskId) {
 		return this.employeeRepository.findNotAssignedToTask(taskId);
 	}
 
 	@Transactional(readOnly = true)
-	public Iterable<Employee> findNotAssignedToTaskInBuilding(int taskId, int buildingId) throws DataAccessException {
+	public Collection<Employee> findNotAssignedToTaskInBuilding(int taskId, int buildingId) {
 		return this.employeeRepository.findNotAssignedToTaskInBuilding(taskId, buildingId);
 	}
 
 	@Transactional(readOnly = true)
-	public Iterable<Employee> findAssignableToTask(int taskId) throws DataAccessException {
+	public Collection<Employee> findAssignableToTask(int taskId) {
 		Optional<Task> task = this.taskService.findTaskById(taskId);
 		if (!task.isPresent()) {
 			return new ArrayList<>();
@@ -79,11 +79,11 @@ public class EmployeeService {
 			return new ArrayList<>();
 		}
 		if (task.get().getEmployees().size() == 0) {
-			Iterable<Employee> notAssignedToTask = this.findNotAssignedToTask(taskId);
+			Collection<Employee> notAssignedToTask = this.findNotAssignedToTask(taskId);
 			return notAssignedToTask;
 		} else {
 			int buildingId = task.get().getEmployees().get(0).getBuilding().getId();
-			Iterable<Employee> notAssignedToTaskInBuilding = this.findNotAssignedToTaskInBuilding(taskId, buildingId);
+			Collection<Employee> notAssignedToTaskInBuilding = this.findNotAssignedToTaskInBuilding(taskId, buildingId);
 			return notAssignedToTaskInBuilding;
 		}
 	}
@@ -99,12 +99,16 @@ public class EmployeeService {
 	}
 
 	@Transactional(readOnly = true)
-	public Iterable<Employee> findAll() throws DataAccessException {
-		return this.employeeRepository.findAll();
+	public Collection<Employee> findAll() {
+		Collection<Employee> allEmployees = new ArrayList<Employee>();
+		for (Employee employee : this.employeeRepository.findAll()) {
+			allEmployees.add(employee);
+		}
+		return allEmployees;
 	}
 
 	@Transactional
-	public void saveEmployee(Employee employee) throws DataAccessException {
+	public void saveEmployee(Employee employee) {
 		this.employeeRepository.save(employee);
 		userService.saveUser(employee.getUser());
 		authoritiesService.saveAuthorities(employee.getUser().getUsername(), "employee");
