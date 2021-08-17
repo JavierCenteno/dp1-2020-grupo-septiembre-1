@@ -106,7 +106,7 @@ public class WorkLogController {
 			mav = new ModelAndView("welcome");
 			mav.addObject("error", "The task with id " + taskId + " is already complete.");
 		} else if (result.hasErrors()) {
-			mav = new ModelAndView("tasks/createOrUpdateWorkLogForm");
+			mav = new ModelAndView("workLogs/createOrUpdateWorkLogForm");
 		} else if (totalHours != null ? totalHours + workLog.getHours() > 8 : false) {
 			mav = new ModelAndView("welcome");
 			mav.addObject("error",
