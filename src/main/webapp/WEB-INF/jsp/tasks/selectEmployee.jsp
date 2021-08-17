@@ -8,7 +8,7 @@
 <petclinic:layout pageName="employees">
 
 	<c:if test="${not empty error}">
-		<div style="color: firebrick; font-weight: bold;">${error}</div>
+		<div style="color: firebrick; font-weight: bold;"><c:out value="${error}" /></div>
 	</c:if>
 
 	<h2>Select Employee</h2>
@@ -23,7 +23,7 @@
 			<c:forEach items="${selections}" var="employee">
 				<tr>
 					<td>
-						<a href="/tasks/${taskId}/assignEmployee/${employee.id}">${employee.name}</a>
+						<a href="/tasks/${taskId}/assignEmployee/${employee.id}"><c:out value="${employee.name}" /></a>
 					</td>
 				</tr>
 			</c:forEach>

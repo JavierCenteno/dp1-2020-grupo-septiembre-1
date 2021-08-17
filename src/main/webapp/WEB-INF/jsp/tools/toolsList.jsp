@@ -8,7 +8,7 @@
 <petclinic:layout pageName="tools">
 
 	<c:if test="${not empty error}">
-		<div style="color: firebrick; font-weight: bold;">${error}</div>
+		<div style="color: firebrick; font-weight: bold;"><c:out value="${error}" /></div>
 	</c:if>
 
 	<h2>Tools of Building</h2>

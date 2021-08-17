@@ -6,6 +6,10 @@
 
 <petclinic:layout pageName="employees">
 
+	<c:if test="${not empty error}">
+		<div style="color: firebrick; font-weight: bold;"><c:out value="${error}" /></div>
+	</c:if>
+
 	<h2>Employee Information</h2>
 
 	<table class="table table-striped">

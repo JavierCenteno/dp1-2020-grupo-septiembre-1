@@ -7,7 +7,9 @@
 <%@ taglib prefix="petclinic" tagdir="/WEB-INF/tags"%>
 
 <petclinic:layout pageName="buildings">
+
 	<h2>Building</h2>
+
 	<form:form modelAttribute="building" class="form-horizontal"
 		id="add-building-form">
 		<div class="form-group has-feedback">
@@ -20,4 +22,5 @@
 			</div>
 		</div>
 	</form:form>
+
 </petclinic:layout>
