@@ -20,18 +20,19 @@ public class ManagerService {
 	////////////////////////////////////////////////////////////////////////////////
 	// Services
 
-	@Autowired
 	private UserService userService;
 
-	@Autowired
 	private AuthoritiesService authoritiesService;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Constructor
 
 	@Autowired
-	public ManagerService(ManagerRepository managerRepository) {
+	public ManagerService(ManagerRepository managerRepository, UserService userService,
+			AuthoritiesService authoritiesService) {
 		this.managerRepository = managerRepository;
+		this.userService = userService;
+		this.authoritiesService = authoritiesService;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////

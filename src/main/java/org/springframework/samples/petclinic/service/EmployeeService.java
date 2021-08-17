@@ -23,21 +23,22 @@ public class EmployeeService {
 	////////////////////////////////////////////////////////////////////////////////
 	// Services
 
-	@Autowired
 	private UserService userService;
 
-	@Autowired
 	private AuthoritiesService authoritiesService;
 
-	@Autowired
 	private TaskService taskService;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Constructor
 
 	@Autowired
-	public EmployeeService(EmployeeRepository employeeRepository) {
+	public EmployeeService(EmployeeRepository employeeRepository, UserService userService,
+			AuthoritiesService authoritiesService, TaskService taskService) {
 		this.employeeRepository = employeeRepository;
+		this.userService = userService;
+		this.authoritiesService = authoritiesService;
+		this.taskService = taskService;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
