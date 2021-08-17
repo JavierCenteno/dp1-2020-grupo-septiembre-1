@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.samples.petclinic.model.Authorities;
+import org.springframework.samples.petclinic.model.Building;
 import org.springframework.samples.petclinic.model.Employee;
+import org.springframework.samples.petclinic.model.Task;
 import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.util.EntityUtils;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,12 @@ class EmployeeServiceTests {
 
 	@Autowired
 	protected AuthoritiesService authoritiesService;
+
+	@Autowired
+	protected BuildingService buildingService;
+
+	@Autowired
+	protected TaskService taskService;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Tests
@@ -72,6 +80,80 @@ class EmployeeServiceTests {
 		assertThat(employee8.getName()).isEqualTo("Hector Employee");
 		assertThat(employee8.getEmail()).isEqualTo("hector@employee.com");
 		assertThat(employee8.getAddress()).isEqualTo("c/Employee 8");
+	}
+
+	@Test
+	void shouldFindAllEmployeesNotAssignedToABuilding() {
+		Building building1 = this.buildingService.findBuildingById(1).get();
+		Collection<Employee> employees;
+		// Ahora mismo hay 2 empleados no asignados a un edificio
+		employees = this.employeeService.findNotAssignedToABuilding();
+		assertThat(employees.size()).isEqualTo(2);
+		// Asignamos a employee7 (que no está asignado) a building1
+		Employee employee7 = this.employeeService.findEmployeeByUsername("employee7").get();
+		employee7.setBuilding(building1);
+		this.employeeService.saveEmployee(employee7);
+		// Ahora mismo debería haber un empleado menos no asignado
+		employees = this.employeeService.findNotAssignedToABuilding();
+		assertThat(employees.size()).isEqualTo(1);
+	}
+
+	@Test
+	void shouldFindAllEmployeesNotAssignedToTask() {
+		Task task1 = this.taskService.findTaskById(1).get();
+		Collection<Employee> employees;
+		// Ahora mismo hay 8 empleados no asignados a task1
+		employees = this.employeeService.findNotAssignedToTask(1);
+		assertThat(employees.size()).isEqualTo(8);
+		// Asignamos task1 a employee1
+		Employee employee1 = this.employeeService.findEmployeeByUsername("employee1").get();
+		employee1.addTask(task1);
+		this.employeeService.saveEmployee(employee1);
+		task1.addEmployee(employee1);
+		this.taskService.saveTask(task1);
+		// Ahora mismo debería haber un empleado menos no asignado a task1
+		employees = this.employeeService.findNotAssignedToTask(1);
+		assertThat(employees.size()).isEqualTo(7);
+	}
+
+	@Test
+	void shouldFindAllEmployeesNotAssignedToTaskInBuilding() {
+		Task task1 = this.taskService.findTaskById(1).get();
+		Collection<Employee> employees;
+		// Ahora mismo hay 4 empleados en building1 no asignados a task1
+		employees = this.employeeService.findNotAssignedToTaskInBuilding(1, 1);
+		assertThat(employees.size()).isEqualTo(4);
+		// Asignamos task1 a employee1
+		Employee employee1 = this.employeeService.findEmployeeByUsername("employee1").get();
+		employee1.addTask(task1);
+		this.employeeService.saveEmployee(employee1);
+		task1.addEmployee(employee1);
+		this.taskService.saveTask(task1);
+		// Ahora mismo debería haber un empleado menos en building1 no asignado a task1
+		employees = this.employeeService.findNotAssignedToTaskInBuilding(1, 1);
+		assertThat(employees.size()).isEqualTo(3);
+	}
+
+	@Test
+	void shouldFindAllEmployeesAssignableToTask() {
+		Task task1 = this.taskService.findTaskById(1).get();
+		Collection<Employee> employees;
+		// Ahora mismo task1 no tiene edificio asignado,
+		// por lo que cualquier empleado (8 en total) es asignable a task1
+		// (menos los empleados ya asignados, que son 0, dejando el total en 8)
+		employees = this.employeeService.findAssignableToTask(1);
+		assertThat(employees.size()).isEqualTo(8);
+		// Asignamos task1 a employee1
+		Employee employee1 = this.employeeService.findEmployeeByUsername("employee1").get();
+		employee1.addTask(task1);
+		this.employeeService.saveEmployee(employee1);
+		task1.addEmployee(employee1);
+		this.taskService.saveTask(task1);
+		// Como task1 está asignada a un empleado de edificio1,
+		// cualquier empleado de edificio1 (4 en total) es asignable a task1
+		// (menos los empleados ya asignados, que son 1, dejando el total en 3)
+		employees = this.employeeService.findAssignableToTask(1);
+		assertThat(employees.size()).isEqualTo(3);
 	}
 
 	@Test
