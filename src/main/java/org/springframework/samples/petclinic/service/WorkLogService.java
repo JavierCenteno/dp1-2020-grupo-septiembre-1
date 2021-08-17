@@ -25,17 +25,14 @@ public class WorkLogService {
 	// Services
 
 	private EmployeeService employeeService;
-	private TaskService taskService;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Constructor
 
 	@Autowired
-	public WorkLogService(WorkLogRepository workLogRepository, EmployeeService employeeService,
-			TaskService taskService) {
+	public WorkLogService(WorkLogRepository workLogRepository, EmployeeService employeeService) {
 		this.workLogRepository = workLogRepository;
 		this.employeeService = employeeService;
-		this.taskService = taskService;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -47,8 +44,8 @@ public class WorkLogService {
 	}
 
 	@Transactional(readOnly = true)
-	public Collection<WorkLog> findByEmployeeAndTask(int employeeId, int taskId) throws DataAccessException {
-		return this.workLogRepository.findByEmployeeAndTask(employeeId, taskId);
+	public Collection<WorkLog> findByEmployee(int employeeId) throws DataAccessException {
+		return this.workLogRepository.findByEmployee(employeeId);
 	}
 
 	@Transactional(readOnly = true)
@@ -61,7 +58,7 @@ public class WorkLogService {
 	}
 
 	@Transactional(readOnly = true)
-	public Integer findHoursLoggedIntoTaskByEmployeeAtDate(int taskId, int employeeId, Date date)
+	public Integer findHoursLoggedByEmployeeAtDate(int employeeId, Date date)
 			throws DataAccessException {
 		if (date == null) {
 			return null;
@@ -69,13 +66,10 @@ public class WorkLogService {
 		if (!this.employeeService.findEmployeeById(employeeId).isPresent()) {
 			return null;
 		}
-		if (!this.taskService.findTaskById(taskId).isPresent()) {
-			return null;
-		}
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 		Integer totalHours = 0;
-		Iterable<WorkLog> allWorkLogsOfTask = this.findByEmployeeAndTask(employeeId, taskId);
-		for (WorkLog workLog : allWorkLogsOfTask) {
+		Iterable<WorkLog> allWorkLogsOfEmployee = this.findByEmployee(employeeId);
+		for (WorkLog workLog : allWorkLogsOfEmployee) {
 			if (formatter.format(workLog.getDate()).equals(formatter.format(date))) {
 				totalHours += workLog.getHours();
 			}

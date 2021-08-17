@@ -53,7 +53,7 @@ public class WorkLogController {
 
 		Optional<Employee> employee = this.employeeService.findEmployeePrincipal();
 		Optional<Task> task = this.taskService.findTaskById(taskId);
-		Integer totalHours = this.workLogService.findHoursLoggedIntoTaskByEmployeeAtDate(taskId, employee.get().getId(),
+		Integer totalHours = this.workLogService.findHoursLoggedByEmployeeAtDate(employee.get().getId(),
 				new Date());
 		if (!employee.isPresent()) {
 			// No *debería* ser posible
@@ -89,7 +89,7 @@ public class WorkLogController {
 
 		Optional<Employee> employee = this.employeeService.findEmployeePrincipal();
 		Optional<Task> task = this.taskService.findTaskById(taskId);
-		Integer totalHours = this.workLogService.findHoursLoggedIntoTaskByEmployeeAtDate(taskId, employee.get().getId(),
+		Integer totalHours = this.workLogService.findHoursLoggedByEmployeeAtDate(employee.get().getId(),
 				new Date());
 		if (!employee.isPresent()) {
 			// No *debería* ser posible
