@@ -22,28 +22,39 @@
 		<div class="navbar-collapse collapse" id="main-navbar">
 			<ul class="nav navbar-nav">
 
-				<petclinic:menuItem active="${name eq 'home'}" url="/"
+				<petclinic:menuItem active="false" url="/"
 					title="home page">
 					<span class="glyphicon glyphicon-home" aria-hidden="true"></span>
 					<span>Home</span>
 				</petclinic:menuItem>
 
-				<petclinic:menuItem active="${name eq 'managers'}" url="/managers"
-					title="Managers">
-					<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-					<span>Managers</span>
-				</petclinic:menuItem>
+				<sec:authorize access="hasAuthority('manager')">
+					<petclinic:menuItem active="false" url="/buildings"
+						title="buildings">
+						<span>Buildings</span>
+					</petclinic:menuItem>
+					<petclinic:menuItem active="false" url="/unassignedEmployees"
+						title="unassigned employees">
+						<span>Unassigned employees</span>
+					</petclinic:menuItem>
+					<petclinic:menuItem active="false" url="/tasks/unassignedTasks"
+						title="unassigned tasks">
+						<span>Unassigned tasks</span>
+					</petclinic:menuItem>
+					<petclinic:menuItem active="false" url="/tasks/uncompleteTasks"
+						title="uncomplete tasks">
+						<span>Uncomplete tasks</span>
+					</petclinic:menuItem>
+				</sec:authorize>
 
-				<petclinic:menuItem active="${name eq 'employees'}" url="/employees"
-					title="employees">
-					<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
-					<span>Employees</span>
-				</petclinic:menuItem>
+				<sec:authorize access="hasAuthority('employee')">
+					<petclinic:menuItem active="false" url="/myTasks"
+						title="my tasks">
+						<span>My tasks</span>
+					</petclinic:menuItem>
+				</sec:authorize>
 
 			</ul>
-
-
-
 
 			<ul class="nav navbar-nav navbar-right">
 				<sec:authorize access="!isAuthenticated()">
