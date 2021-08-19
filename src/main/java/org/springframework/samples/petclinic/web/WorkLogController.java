@@ -48,7 +48,7 @@ public class WorkLogController {
 	// Create
 
 	@GetMapping(value = "/myTasks/{taskId}/workLog")
-	public ModelAndView initCreationFormManager(@PathVariable("taskId") int taskId) {
+	public ModelAndView initCreationForm(@PathVariable("taskId") int taskId) {
 		ModelAndView mav;
 
 		Optional<Employee> employee = this.employeeService.findEmployeePrincipal();
@@ -83,7 +83,7 @@ public class WorkLogController {
 	}
 
 	@PostMapping(value = "/myTasks/{taskId}/workLog")
-	public ModelAndView processCreationFormManager(@PathVariable("taskId") int taskId, @Valid WorkLog workLog,
+	public ModelAndView processCreationForm(@PathVariable("taskId") int taskId, @Valid WorkLog workLog,
 			BindingResult result) {
 		ModelAndView mav;
 
