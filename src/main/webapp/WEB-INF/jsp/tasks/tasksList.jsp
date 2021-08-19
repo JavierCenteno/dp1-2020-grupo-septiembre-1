@@ -13,12 +13,23 @@
 
 	<h2>Tasks</h2>
 
+	<div>
+		<a href="/tasks/new">Create new task</a>
+	</div>
+
+	<div>
+		<a href="/tasks/unassignedTasks">Unassigned tasks</a>
+	</div>
+
+	<div>
+		<a href="/tasks/uncompleteTasks">Uncomplete tasks</a>
+	</div>
+
 	<table id="tasksTable" class="table table-striped">
 		<thead>
 			<tr>
 				<th>Name</th>
 				<th>Income</th>
-				<th>Actions</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -30,7 +41,6 @@
 						</spring:url> <a href="${fn:escapeXml(taskUrl)}"><c:out
 								value="${task.name}" /></a></td>
 					<td><c:out value="${task.income}" /></td>
-					<td></td>
 				</tr>
 			</c:forEach>
 		</tbody>
