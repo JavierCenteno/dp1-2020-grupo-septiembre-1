@@ -13,6 +13,8 @@
 
 	<h2>Buildings</h2>
 
+	<a href="/buildings/new">Create new building</a>
+
 	<table id="buildingsTable" class="table table-striped">
 		<thead>
 			<tr>
@@ -35,4 +37,5 @@
 			</c:forEach>
 		</tbody>
 	</table>
+
 </petclinic:layout>

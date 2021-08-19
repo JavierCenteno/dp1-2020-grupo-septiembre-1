@@ -10,6 +10,8 @@
 
 	<h2>Building</h2>
 
+	<a href="/buildings">Go to the list of buildings</a>
+
 	<form:form modelAttribute="building" class="form-horizontal"
 		id="add-building-form">
 		<div class="form-group has-feedback">

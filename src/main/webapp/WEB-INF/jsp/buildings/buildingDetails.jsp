@@ -12,6 +12,8 @@
 
 	<h2>Building Information</h2>
 
+	<a href="/buildings">Go to the list of buildings</a>
+
 	<table class="table table-striped">
 		<tr>
 			<th>Name</th>
