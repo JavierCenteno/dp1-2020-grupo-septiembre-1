@@ -167,7 +167,6 @@ public class TaskController {
 			mav = this.listEmployee();
 			mav.addObject("error", "The task with id " + taskId + " is already complete.");
 		} else {
-			mav = this.listEmployee();
 			Task taskInternal = task.get();
 			for (Tool toolOfTask : taskInternal.getTools()) {
 				toolOfTask.setTask(null);
@@ -180,6 +179,7 @@ public class TaskController {
 			Building buildingOfTask = employeeOfTask.getBuilding();
 			buildingOfTask.setIncome(buildingOfTask.getIncome() + taskInternal.getIncome());
 			this.buildingService.saveBuilding(buildingOfTask);
+			mav = this.listEmployee();
 		}
 
 		return mav;
