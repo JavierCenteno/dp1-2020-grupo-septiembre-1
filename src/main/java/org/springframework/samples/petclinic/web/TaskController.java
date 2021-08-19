@@ -52,7 +52,7 @@ public class TaskController {
 
 	@GetMapping(value = "/tasks/unassignedTasks")
 	public ModelAndView listUnassignedManager() {
-		ModelAndView mav = new ModelAndView("tasks/tasksList");
+		ModelAndView mav = new ModelAndView("tasks/unassignedTasksList");
 
 		Iterable<Task> tasks = this.taskService.findUnassigned();
 		mav.addObject("selections", tasks);
@@ -62,7 +62,7 @@ public class TaskController {
 
 	@GetMapping(value = "/tasks/uncompleteTasks")
 	public ModelAndView listUncompletedManager() {
-		ModelAndView mav = new ModelAndView("tasks/tasksList");
+		ModelAndView mav = new ModelAndView("tasks/uncompleteTasksList");
 
 		Iterable<Task> tasks = this.taskService.findAssignedAndUncomplete();
 		mav.addObject("selections", tasks);
@@ -132,7 +132,7 @@ public class TaskController {
 			mav = new ModelAndView("welcome");
 			mav.addObject("error", "The employee currently logged in could not be found.");
 		} else {
-			mav = new ModelAndView("myTasks/tasksList");
+			mav = new ModelAndView("tasks/myTasksList");
 			Iterable<Task> tasks = this.taskService.findAssignedToEmployeeAndNotComplete(employee.get().getId());
 			mav.addObject("selections", tasks);
 		}
