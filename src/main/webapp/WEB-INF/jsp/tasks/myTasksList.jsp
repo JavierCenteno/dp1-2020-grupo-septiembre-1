@@ -18,7 +18,8 @@
 			<tr>
 				<th>Name</th>
 				<th>Income</th>
-				<th>Actions</th>
+				<th>Register work</th>
+				<th>Complete task</th>
 			</tr>
 		</thead>
 		<tbody>
