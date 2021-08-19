@@ -13,9 +13,13 @@
 
 	<h2>Tools of Building</h2>
 
-	<a href="/buildings/${buildingId}">Go to the building</a>
+	<div>
+		<a href="/buildings/${buildingId}">Go to the building</a>
+	</div>
 
-	<a href="/buildings/${buildingId}/tools/new">Create new tool for the building</a>
+	<div>
+		<a href="/buildings/${buildingId}/tools/new">Create new tool for the building</a>
+	</div>
 
 	<table id="toolsTable" class="table table-striped">
 		<thead>

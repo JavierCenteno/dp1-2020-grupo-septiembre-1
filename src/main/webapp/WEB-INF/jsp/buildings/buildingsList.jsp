@@ -13,7 +13,9 @@
 
 	<h2>Buildings</h2>
 
-	<a href="/buildings/new">Create new building</a>
+	<div>
+		<a href="/buildings/new">Create new building</a>
+	</div>
 
 	<table id="buildingsTable" class="table table-striped">
 		<thead>

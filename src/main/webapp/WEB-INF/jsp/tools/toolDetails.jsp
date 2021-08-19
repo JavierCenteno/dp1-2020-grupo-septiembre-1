@@ -12,7 +12,9 @@
 
 	<h2>Tool Information</h2>
 
-	<a href="/buildings/${tool.building.id}/tools">Go to the list of tools of building</a>
+	<div>
+		<a href="/buildings/${tool.building.id}/tools">Go to the list of tools of building</a>
+	</div>
 
 	<table class="table table-striped">
 		<tr>

@@ -12,7 +12,9 @@
 
 	<h2>Building Information</h2>
 
-	<a href="/buildings">Go to the list of buildings</a>
+	<div>
+		<a href="/buildings">Go to the list of buildings</a>
+	</div>
 
 	<table class="table table-striped">
 		<tr>
