@@ -17,10 +17,6 @@
 		<a href="/tasks/new">Create new task</a>
 	</div>
 
-	<div>
-		<a href="/tasks">All tasks</a>
-	</div>
-
 	<table id="tasksTable" class="table table-striped">
 		<thead>
 			<tr>

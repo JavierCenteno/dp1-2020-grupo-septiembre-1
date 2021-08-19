@@ -104,7 +104,7 @@ class TaskControllerTests {
 		mockMvc.perform(get("/tasks/unassignedTasks"))
 				// result
 				.andExpect(status().isOk()).andExpect(model().attributeExists("selections"))
-				.andExpect(view().name("tasks/tasksList"));
+				.andExpect(view().name("tasks/unassignedTasksList"));
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -116,7 +116,7 @@ class TaskControllerTests {
 		mockMvc.perform(get("/tasks/uncompleteTasks"))
 				// result
 				.andExpect(status().isOk()).andExpect(model().attributeExists("selections"))
-				.andExpect(view().name("tasks/tasksList"));
+				.andExpect(view().name("tasks/uncompleteTasksList"));
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -128,7 +128,7 @@ class TaskControllerTests {
 		mockMvc.perform(get("/myTasks"))
 				// result
 				.andExpect(status().isOk()).andExpect(model().attributeExists("selections"))
-				.andExpect(view().name("myTasks/tasksList"));
+				.andExpect(view().name("tasks/myTasksList"));
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -189,7 +189,7 @@ class TaskControllerTests {
 	void testCompleteTask() throws Exception {
 		mockMvc.perform(get("/myTasks/{taskId}/complete", TASK_ID))
 				// result
-				.andExpect(view().name("myTasks/tasksList"));
+				.andExpect(view().name("tasks/myTasksList"));
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -200,7 +200,7 @@ class TaskControllerTests {
 	void testAssignEmployeeToTask() throws Exception {
 		mockMvc.perform(get("/tasks/{taskId}/assignEmployee/{employeeId}", TASK_ID, EMPLOYEE_ID))
 				// result
-				.andExpect(view().name("tasks/tasksList"));
+				.andExpect(view().name("tasks/uncompleteTasksList"));
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -213,7 +213,7 @@ class TaskControllerTests {
 		employee.addTask(task);
 		mockMvc.perform(get("/tasks/{taskId}/assignTool/{toolId}", TASK_ID, TOOL_ID))
 				// result
-				.andExpect(view().name("tasks/tasksList"));
+				.andExpect(view().name("tasks/uncompleteTasksList"));
 	}
 
 }
