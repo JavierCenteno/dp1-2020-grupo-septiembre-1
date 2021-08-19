@@ -55,6 +55,7 @@ public class WorkLogController {
 		Optional<Task> task = this.taskService.findTaskById(taskId);
 		Integer totalHours = this.workLogService.findHoursLoggedByEmployeeAtDate(employee.get().getId(),
 				new Date());
+		
 		if (!employee.isPresent()) {
 			// No *debería* ser posible
 			// El usuario necesita la autoridad "employee" para llegar aquí
@@ -91,6 +92,7 @@ public class WorkLogController {
 		Optional<Task> task = this.taskService.findTaskById(taskId);
 		Integer totalHours = this.workLogService.findHoursLoggedByEmployeeAtDate(employee.get().getId(),
 				new Date());
+
 		if (!employee.isPresent()) {
 			// No *debería* ser posible
 			// El usuario necesita la autoridad "employee" para llegar aquí
@@ -105,16 +107,18 @@ public class WorkLogController {
 		} else if (task.get().getComplete()) {
 			mav = new ModelAndView("welcome");
 			mav.addObject("error", "The task with id " + taskId + " is already complete.");
-		} else if (result.hasErrors()) {
-			mav = new ModelAndView("workLogs/createOrUpdateWorkLogForm");
 		} else if (totalHours != null ? totalHours + workLog.getHours() > 8 : false) {
 			mav = new ModelAndView("welcome");
 			mav.addObject("error",
 					"The task with id " + taskId
 							+ " can't have more than 8 hours logged in by the employee today (currently: " + totalHours
 							+ ", you attempted to add " + workLog.getHours() + ").");
+		} else if (result.hasErrors()) {
+			mav = new ModelAndView("workLogs/createOrUpdateWorkLogForm");
 		} else {
 			workLog.setDate(new Date());
+			workLog.setTask(task.get());
+			workLog.setEmployee(employee.get());
 			this.workLogService.saveWorkLog(workLog);
 			Task taskInternal = task.get();
 			taskInternal.addWorkLog(workLog);
