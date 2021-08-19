@@ -23,7 +23,9 @@
 			<c:forEach items="${selections}" var="building">
 				<tr>
 					<td>
-						<a href="/unassignedEmployees/${employeeId}/assignBuilding/${building.id}"><c:out value="${building.name}" /></a>
+						<form action="/unassignedEmployees/${employeeId}/assignBuilding/${building.id}" method="post">
+							<button type="submit"><c:out value="${building.name}" /></button>
+						</form>
 					</td>
 				</tr>
 			</c:forEach>

@@ -28,7 +28,11 @@
 					<td><c:out value="${task.name}" /></td>
 					<td><c:out value="${task.income}" /></td>
 					<td><a href="/myTasks/${task.id}/workLog">Register work</a></td>
-					<td><a href="/myTasks/${task.id}/complete">Complete task</a></td>
+					<td>
+						<form action="/myTasks/${task.id}/complete" method="post">
+							<button type="submit">Complete task</button>
+						</form>
+					</td>
 				</tr>
 			</c:forEach>
 		</tbody>

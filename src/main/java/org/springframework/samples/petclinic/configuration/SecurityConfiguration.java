@@ -63,6 +63,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 // se sirve desde esta misma página.
                 http.csrf().ignoringAntMatchers("/h2-console/**");
                 http.headers().frameOptions().sameOrigin();
+
+                // permitir POSTs en métodos que usan POSTs
+                http.csrf().ignoringAntMatchers("/unassignedEmployees/**");
+                http.csrf().ignoringAntMatchers("/myTasks/**");
+                http.csrf().ignoringAntMatchers("/tasks/**");
 	}
 
 	@Override

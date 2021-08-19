@@ -23,7 +23,9 @@
 			<c:forEach items="${selections}" var="tool">
 				<tr>
 					<td>
-						<a href="/tasks/${taskId}/assignTool/${tool.id}"><c:out value="${tool.name}" /></a>
+						<form action="/tasks/${taskId}/assignTool/${tool.id}" method="post">
+							<button type="submit"><c:out value="${tool.name}" /></button>
+						</form>
 					</td>
 				</tr>
 			</c:forEach>
