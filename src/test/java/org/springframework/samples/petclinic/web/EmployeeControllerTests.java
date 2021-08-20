@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.configuration.SecurityConfiguration;
+import org.springframework.samples.petclinic.model.Building;
 import org.springframework.samples.petclinic.model.Employee;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.hamcrest.Matchers.hasProperty;
@@ -36,6 +37,8 @@ class EmployeeControllerTests {
 
 	private static final int EMPLOYEE_ID = 1;
 
+	private static final int BUILDING_ID = 1;
+
 	// @Autowired
 	// private EmployeeController employeeController;
 
@@ -59,6 +62,8 @@ class EmployeeControllerTests {
 
 	private Employee employee;
 
+	private Building building;
+
 	@BeforeEach
 	void setup() {
 		employee = new Employee();
@@ -67,6 +72,12 @@ class EmployeeControllerTests {
 		employee.setEmail("employee@employee.com");
 		employee.setAddress("c/Employee");
 		given(this.employeeService.findEmployeeById(EMPLOYEE_ID)).willReturn(Optional.of(employee));
+		building = new Building();
+		building.setId(BUILDING_ID);
+		building.setName("Building");
+		building.setAddress("c/Building");
+		building.setIncome(0);
+		given(this.buildingService.findBuildingById(BUILDING_ID)).willReturn(Optional.of(building));
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -134,6 +145,80 @@ class EmployeeControllerTests {
 				.andExpect(model().attributeHasFieldErrors("employee", "email"))
 				.andExpect(model().attributeHasFieldErrors("employee", "address"))
 				.andExpect(view().name("employees/createOrUpdateEmployeeForm"));
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Tests: List unassigned
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testListUnassignedEmployees() throws Exception {
+		mockMvc.perform(get("/unassignedEmployees"))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("selections"))
+				.andExpect(view().name("employees/unassignedEmployeesList"));
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Tests: Assign building
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testInitAssignBuilding() throws Exception {
+		mockMvc.perform(get("/unassignedEmployees/" + EMPLOYEE_ID + "/assignBuilding"))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("selections"))
+				.andExpect(view().name("employees/selectBuilding"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testInitAssignBuildingWrongEmployeeId() throws Exception {
+		mockMvc.perform(get("/unassignedEmployees/" + 0 + "/assignBuilding"))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testAssignBuildingSuccess() throws Exception {
+		mockMvc.perform(post("/unassignedEmployees/" + EMPLOYEE_ID + "/assignBuilding/" + BUILDING_ID)
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("selections"))
+				.andExpect(view().name("employees/unassignedEmployeesList"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testAssignBuildingWrongEmployeeId() throws Exception {
+		mockMvc.perform(post("/unassignedEmployees/" + 0 + "/assignBuilding/" + BUILDING_ID)
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testAssignBuildingWrongBuildingId() throws Exception {
+		mockMvc.perform(post("/unassignedEmployees/" + EMPLOYEE_ID + "/assignBuilding/" + 0)
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testAssignBuildingWhenEmployeeAlreadyHasBuilding() throws Exception {
+		employee.setBuilding(building);
+		mockMvc.perform(post("/unassignedEmployees/" + EMPLOYEE_ID + "/assignBuilding/" + BUILDING_ID)
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
 	}
 
 }
