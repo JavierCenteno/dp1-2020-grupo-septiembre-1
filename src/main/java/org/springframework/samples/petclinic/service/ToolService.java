@@ -48,8 +48,8 @@ public class ToolService {
 	}
 
 	@Transactional(readOnly = true)
-	public Collection<Tool> findNotAssignedToTaskInBuilding(int taskId, int buildingId) throws DataAccessException {
-		return this.toolRepository.findNotAssignedToTaskInBuilding(taskId, buildingId);
+	public Collection<Tool> findNotAssignedToTaskInBuilding(int buildingId) throws DataAccessException {
+		return this.toolRepository.findNotAssignedToTaskInBuilding(buildingId);
 	}
 
 	@Transactional(readOnly = true)
@@ -65,7 +65,7 @@ public class ToolService {
 			return new ArrayList<>();
 		}
 		int buildingId = task.get().getEmployees().get(0).getBuilding().getId();
-		Collection<Tool> notAssignedToTaskInBuilding = this.findNotAssignedToTaskInBuilding(taskId, buildingId);
+		Collection<Tool> notAssignedToTaskInBuilding = this.findNotAssignedToTaskInBuilding(buildingId);
 		return notAssignedToTaskInBuilding;
 	}
 
