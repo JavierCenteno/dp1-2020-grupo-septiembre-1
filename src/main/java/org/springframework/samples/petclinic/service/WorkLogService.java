@@ -58,8 +58,12 @@ public class WorkLogService {
 	}
 
 	@Transactional(readOnly = true)
-	public Integer findHoursLoggedByEmployeeAtDate(int employeeId, Date date)
-			throws DataAccessException {
+	public Integer findHoursLoggedByEmployeeToday(int employeeId) {
+		return this.findHoursLoggedByEmployeeAtDate(employeeId, new Date());
+	}
+
+	@Transactional(readOnly = true)
+	public Integer findHoursLoggedByEmployeeAtDate(int employeeId, Date date) throws DataAccessException {
 		if (date == null) {
 			return null;
 		}

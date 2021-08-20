@@ -53,9 +53,11 @@ public class WorkLogController {
 
 		Optional<Employee> employee = this.employeeService.findEmployeePrincipal();
 		Optional<Task> task = this.taskService.findTaskById(taskId);
-		Integer totalHours = this.workLogService.findHoursLoggedByEmployeeAtDate(employee.get().getId(),
-				new Date());
-		
+		Integer totalHours = this.workLogService.findHoursLoggedByEmployeeToday(employee.get().getId());
+
+		System.out.println("TOTAL HOURS: " + totalHours);
+		System.out.println("ERROR: " + totalHours != null ? totalHours >= 8 : false);
+
 		if (!employee.isPresent()) {
 			// No *debería* ser posible
 			// El usuario necesita la autoridad "employee" para llegar aquí
@@ -90,8 +92,7 @@ public class WorkLogController {
 
 		Optional<Employee> employee = this.employeeService.findEmployeePrincipal();
 		Optional<Task> task = this.taskService.findTaskById(taskId);
-		Integer totalHours = this.workLogService.findHoursLoggedByEmployeeAtDate(employee.get().getId(),
-				new Date());
+		Integer totalHours = this.workLogService.findHoursLoggedByEmployeeToday(employee.get().getId());
 
 		if (!employee.isPresent()) {
 			// No *debería* ser posible
