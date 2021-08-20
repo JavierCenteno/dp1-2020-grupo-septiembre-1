@@ -1,0 +1,139 @@
+package org.springframework.samples.petclinic.web;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.samples.petclinic.configuration.SecurityConfiguration;
+import org.springframework.samples.petclinic.model.Employee;
+import org.springframework.test.web.servlet.MockMvc;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.BDDMockito.given;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.samples.petclinic.service.AuthoritiesService;
+import org.springframework.samples.petclinic.service.BuildingService;
+import org.springframework.samples.petclinic.service.EmployeeService;
+import org.springframework.samples.petclinic.service.TaskService;
+import org.springframework.samples.petclinic.service.UserService;
+import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
+import org.springframework.security.test.context.support.WithMockUser;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.Optional;
+
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+
+@WebMvcTest(controllers = EmployeeController.class, excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebSecurityConfigurer.class), excludeAutoConfiguration = SecurityConfiguration.class)
+class EmployeeControllerTests {
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Initialize
+
+	private static final int EMPLOYEE_ID = 1;
+
+	// @Autowired
+	// private EmployeeController employeeController;
+
+	@MockBean
+	private EmployeeService employeeService;
+
+	@MockBean
+	private UserService userService;
+
+	@MockBean
+	private AuthoritiesService authoritiesService;
+
+	@MockBean
+	private BuildingService buildingService;
+
+	@MockBean
+	private TaskService taskService;
+
+	@Autowired
+	private MockMvc mockMvc;
+
+	private Employee employee;
+
+	@BeforeEach
+	void setup() {
+		employee = new Employee();
+		employee.setId(EMPLOYEE_ID);
+		employee.setName("Employee");
+		employee.setEmail("employee@employee.com");
+		employee.setAddress("c/Employee");
+		given(this.employeeService.findEmployeeById(EMPLOYEE_ID)).willReturn(Optional.of(employee));
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Tests: List
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testListEmployees() throws Exception {
+		mockMvc.perform(get("/employees"))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("selections"))
+				.andExpect(view().name("employees/employeesList"));
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Tests: Show
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testShowEmployee() throws Exception {
+		mockMvc.perform(get("/employees/{employeeId}", EMPLOYEE_ID))
+				// result
+				.andExpect(status().isOk())
+				.andExpect(model().attribute("employee", hasProperty("name", is("Employee"))))
+				.andExpect(model().attribute("employee", hasProperty("email", is("employee@employee.com"))))
+				.andExpect(model().attribute("employee", hasProperty("address", is("c/Employee"))))
+				.andExpect(view().name("employees/employeeDetails"));
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Tests: Create
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testInitCreationForm() throws Exception {
+		mockMvc.perform(get("/employees/new"))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("employee"))
+				.andExpect(view().name("employees/createOrUpdateEmployeeForm"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testProcessCreationFormSuccess() throws Exception {
+		mockMvc.perform(post("/employees/new")
+				// params
+				.param("name", "Employee").param("email", "employee@employee.com").param("address", "c/Employee")
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().is3xxRedirection());
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testProcessCreationFormHasErrors() throws Exception {
+		mockMvc.perform(post("/employees/new")
+				// params
+				.param("name", "").param("email", "").param("address", "")
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeHasErrors("employee"))
+				.andExpect(model().attributeHasFieldErrors("employee", "name"))
+				.andExpect(model().attributeHasFieldErrors("employee", "email"))
+				.andExpect(model().attributeHasFieldErrors("employee", "address"))
+				.andExpect(view().name("employees/createOrUpdateEmployeeForm"));
+	}
+
+}
