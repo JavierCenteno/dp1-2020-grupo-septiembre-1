@@ -36,7 +36,8 @@ class TaskControllerTests {
 	////////////////////////////////////////////////////////////////////////////////
 	// Initialize
 
-	private static final int TASK_ID = 1;
+	private static final int TASK_1_ID = 1;
+	private static final int TASK_2_ID = 2;
 	private static final int EMPLOYEE_1_ID = 1;
 	private static final int EMPLOYEE_2_ID = 2;
 	private static final int BUILDING_1_ID = 1;
@@ -61,7 +62,8 @@ class TaskControllerTests {
 	@Autowired
 	private MockMvc mockMvc;
 
-	private Task task;
+	private Task task1;
+	private Task task2;
 	private Employee employee1;
 	private Employee employee2;
 	private Building building1;
@@ -105,12 +107,18 @@ class TaskControllerTests {
 		employee2.setBuilding(building2);
 		building2.addEmployee(employee2);
 		given(this.employeeService.findEmployeeById(EMPLOYEE_2_ID)).willReturn(Optional.of(employee2));
-		task = new Task();
-		task.setId(TASK_ID);
-		task.setName("Task");
-		task.setIncome(0);
-		task.setComplete(false);
-		given(this.taskService.findTaskById(TASK_ID)).willReturn(Optional.of(task));
+		task1 = new Task();
+		task1.setId(TASK_1_ID);
+		task1.setName("Task");
+		task1.setIncome(0);
+		task1.setComplete(false);
+		given(this.taskService.findTaskById(TASK_1_ID)).willReturn(Optional.of(task1));
+		task2 = new Task();
+		task2.setId(TASK_2_ID);
+		task2.setName("Task");
+		task2.setIncome(0);
+		task2.setComplete(false);
+		given(this.taskService.findTaskById(TASK_2_ID)).willReturn(Optional.of(task2));
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -155,7 +163,7 @@ class TaskControllerTests {
 	@WithMockUser(value = "spring")
 	@Test
 	void testShowTask() throws Exception {
-		mockMvc.perform(get("/tasks/{taskId}", TASK_ID))
+		mockMvc.perform(get("/tasks/{taskId}", TASK_1_ID))
 				// result
 				.andExpect(status().isOk()).andExpect(model().attribute("task", hasProperty("name", is("Task"))))
 				.andExpect(view().name("tasks/taskDetails"));
@@ -202,15 +210,55 @@ class TaskControllerTests {
 	////////////////////////////////////////////////////////////////////////////////
 	// Tests: Complete
 
-	// TODO
+	@WithMockUser(value = "spring")
+	@Test
+	void testCompleteTaskSuccess() throws Exception {
+		mockMvc.perform(post("/myTasks/{taskId}/complete", TASK_1_ID)
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("selections"))
+				.andExpect(view().name("tasks/myTasksList"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testCompleteTaskWithWrongTaskId() throws Exception {
+		mockMvc.perform(post("/myTasks/{taskId}/complete", 0)
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testCompleteTaskNotAssignedToEmployeeTaskId() throws Exception {
+		mockMvc.perform(post("/myTasks/{taskId}/complete", TASK_2_ID)
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testCompleteTaskThatIsAlreadyComplete() throws Exception {
+		task1.setComplete(true);
+		mockMvc.perform(post("/myTasks/{taskId}/complete", TASK_1_ID)
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
+	}
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Tests: Assign employee
 
 	@WithMockUser(value = "spring")
 	@Test
-	void testInitAssignEmployee() throws Exception {
-		mockMvc.perform(get("/tasks/{taskId}/assignEmployee", TASK_ID))
+	void testInitAssignEmployeeToTask() throws Exception {
+		mockMvc.perform(get("/tasks/{taskId}/assignEmployee", TASK_1_ID))
 				// result
 				.andExpect(status().isOk()).andExpect(model().attributeExists("selections"))
 				.andExpect(view().name("tasks/selectEmployee"));
@@ -218,7 +266,7 @@ class TaskControllerTests {
 
 	@WithMockUser(value = "spring")
 	@Test
-	void testInitAssignEmployeeWrongTaskId() throws Exception {
+	void testInitAssignEmployeeToTaskWithWrongTaskId() throws Exception {
 		mockMvc.perform(get("/tasks/{taskId}/assignEmployee/", 0))
 				// result
 				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
@@ -226,17 +274,17 @@ class TaskControllerTests {
 
 	@WithMockUser(value = "spring")
 	@Test
-	void testInitAssignEmployeeTaskComplete() throws Exception {
-		task.setComplete(true);
-		mockMvc.perform(get("/tasks/{taskId}/assignEmployee", TASK_ID))
+	void testInitAssignEmployeeToCompleteTask() throws Exception {
+		task1.setComplete(true);
+		mockMvc.perform(get("/tasks/{taskId}/assignEmployee", TASK_1_ID))
 				// result
 				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
 	}
 
 	@WithMockUser(value = "spring")
 	@Test
-	void testAssignEmployeeSuccess() throws Exception {
-		mockMvc.perform(post("/tasks/{taskId}/assignEmployee/{employeeId}", TASK_ID, EMPLOYEE_1_ID)
+	void testAssignEmployeeToTaskSuccess() throws Exception {
+		mockMvc.perform(post("/tasks/{taskId}/assignEmployee/{employeeId}", TASK_1_ID, EMPLOYEE_1_ID)
 				// other
 				.with(csrf()))
 				// result
@@ -246,7 +294,7 @@ class TaskControllerTests {
 
 	@WithMockUser(value = "spring")
 	@Test
-	void testAssignEmployeeWrongTaskId() throws Exception {
+	void testAssignEmployeeToTaskWithWrongTaskId() throws Exception {
 		mockMvc.perform(post("/tasks/{taskId}/assignEmployee/{employeeId}", 0, EMPLOYEE_1_ID)
 				// other
 				.with(csrf()))
@@ -256,8 +304,8 @@ class TaskControllerTests {
 
 	@WithMockUser(value = "spring")
 	@Test
-	void testAssignEmployeeWrongEmployeeId() throws Exception {
-		mockMvc.perform(post("/tasks/{taskId}/assignEmployee/{employeeId}", TASK_ID, 0)
+	void testAssignEmployeeWithWrongEmployeeIdToTask() throws Exception {
+		mockMvc.perform(post("/tasks/{taskId}/assignEmployee/{employeeId}", TASK_1_ID, 0)
 				// other
 				.with(csrf()))
 				// result
@@ -266,9 +314,9 @@ class TaskControllerTests {
 
 	@WithMockUser(value = "spring")
 	@Test
-	void testAssignEmployeeWithoutBuilding() throws Exception {
+	void testAssignEmployeeWithoutBuildingToTask() throws Exception {
 		employee1.setBuilding(null);
-		mockMvc.perform(post("/tasks/{taskId}/assignEmployee/{employeeId}", TASK_ID, EMPLOYEE_1_ID)
+		mockMvc.perform(post("/tasks/{taskId}/assignEmployee/{employeeId}", TASK_1_ID, EMPLOYEE_1_ID)
 				// other
 				.with(csrf()))
 				// result
@@ -277,9 +325,9 @@ class TaskControllerTests {
 
 	@WithMockUser(value = "spring")
 	@Test
-	void testAssignEmployeeTaskComplete() throws Exception {
-		task.setComplete(true);
-		mockMvc.perform(post("/tasks/{taskId}/assignEmployee/{employeeId}", TASK_ID, EMPLOYEE_1_ID)
+	void testAssignEmployeeToCompleteTask() throws Exception {
+		task1.setComplete(true);
+		mockMvc.perform(post("/tasks/{taskId}/assignEmployee/{employeeId}", TASK_1_ID, EMPLOYEE_1_ID)
 				// other
 				.with(csrf()))
 				// result
@@ -288,10 +336,10 @@ class TaskControllerTests {
 
 	@WithMockUser(value = "spring")
 	@Test
-	void testAssignEmployeeAlreadyAssigned() throws Exception {
-		employee1.addTask(task);
-		task.addEmployee(employee1);
-		mockMvc.perform(post("/tasks/{taskId}/assignEmployee/{employeeId}", TASK_ID, EMPLOYEE_1_ID)
+	void testAssignEmployeeAlreadyAssignedToTask() throws Exception {
+		employee1.addTask(task1);
+		task1.addEmployee(employee1);
+		mockMvc.perform(post("/tasks/{taskId}/assignEmployee/{employeeId}", TASK_1_ID, EMPLOYEE_1_ID)
 				// other
 				.with(csrf()))
 				// result
@@ -300,10 +348,10 @@ class TaskControllerTests {
 
 	@WithMockUser(value = "spring")
 	@Test
-	void testAssignEmployeeDifferentBuilding() throws Exception {
-		employee1.addTask(task);
-		task.addEmployee(employee1);
-		mockMvc.perform(post("/tasks/{taskId}/assignEmployee/{employeeId}", TASK_ID, EMPLOYEE_2_ID)
+	void testAssignEmployeeToTaskAtDifferentBuilding() throws Exception {
+		employee1.addTask(task1);
+		task1.addEmployee(employee1);
+		mockMvc.perform(post("/tasks/{taskId}/assignEmployee/{employeeId}", TASK_1_ID, EMPLOYEE_2_ID)
 				// other
 				.with(csrf()))
 				// result
@@ -313,6 +361,120 @@ class TaskControllerTests {
 	////////////////////////////////////////////////////////////////////////////////
 	// Tests: Assign tool
 
-	// TODO
+	@WithMockUser(value = "spring")
+	@Test
+	void testInitAssignToolToTask() throws Exception {
+		task1.addEmployee(employee1);
+		employee1.addTask(task1);
+		mockMvc.perform(get("/tasks/{taskId}/assignTool", TASK_1_ID))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("selections"))
+				.andExpect(view().name("tasks/selectTool"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testInitAssignToolToTaskWithWrongTaskId() throws Exception {
+		task1.addEmployee(employee1);
+		employee1.addTask(task1);
+		mockMvc.perform(get("/tasks/{taskId}/assignTool/", 0))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testInitAssignToolToCompleteTask() throws Exception {
+		task1.addEmployee(employee1);
+		employee1.addTask(task1);
+		task1.setComplete(true);
+		mockMvc.perform(get("/tasks/{taskId}/assignTool", TASK_1_ID))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testAssignToolToTaskSuccess() throws Exception {
+		task1.addEmployee(employee1);
+		employee1.addTask(task1);
+		mockMvc.perform(post("/tasks/{taskId}/assignTool/{toolId}", TASK_1_ID, TOOL_ID)
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("selections"))
+				.andExpect(view().name("tasks/uncompleteTasksList"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testAssignToolToTaskWithWrongTaskId() throws Exception {
+		mockMvc.perform(post("/tasks/{taskId}/assignTool/{toolId}", 0, TOOL_ID)
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testAssignToolWithWrongToolIdToTask() throws Exception {
+		mockMvc.perform(post("/tasks/{taskId}/assignTool/{toolId}", TASK_1_ID, 0)
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testAssignToolThatIsAlreadyAssignedToTask() throws Exception {
+		task1.addEmployee(employee1);
+		employee1.addTask(task1);
+		tool.setTask(task1);
+		task1.addTool(tool);
+		mockMvc.perform(post("/tasks/{taskId}/assignTool/{toolId}", TASK_1_ID, TOOL_ID)
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testAssignToolToCompleteTask() throws Exception {
+		task1.addEmployee(employee1);
+		employee1.addTask(task1);
+		task1.setComplete(true);
+		mockMvc.perform(post("/tasks/{taskId}/assignTool/{toolId}", TASK_1_ID, TOOL_ID)
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testAssignToolToTaskWithoutEmployees() throws Exception {
+		mockMvc.perform(post("/tasks/{taskId}/assignTool/{toolId}", TASK_1_ID, TOOL_ID)
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testAssignToolToTaskAtDifferentBuilding() throws Exception {
+		task1.addEmployee(employee1);
+		employee1.addTask(task1);
+		tool.setBuilding(building2);
+		building2.addTool(tool);
+		mockMvc.perform(post("/tasks/{taskId}/assignTool/{toolId}", TASK_1_ID, TOOL_ID)
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
+	}
 
 }
