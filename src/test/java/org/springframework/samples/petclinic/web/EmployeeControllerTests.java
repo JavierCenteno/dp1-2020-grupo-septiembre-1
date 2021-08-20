@@ -37,7 +37,9 @@ class EmployeeControllerTests {
 
 	private static final int EMPLOYEE_ID = 1;
 
-	private static final int BUILDING_ID = 1;
+	private static final int BUILDING_1_ID = 1;
+
+	private static final int BUILDING_2_ID = 2;
 
 	// @Autowired
 	// private EmployeeController employeeController;
@@ -62,7 +64,9 @@ class EmployeeControllerTests {
 
 	private Employee employee;
 
-	private Building building;
+	private Building building1;
+
+	private Building building2;
 
 	@BeforeEach
 	void setup() {
@@ -72,12 +76,18 @@ class EmployeeControllerTests {
 		employee.setEmail("employee@employee.com");
 		employee.setAddress("c/Employee");
 		given(this.employeeService.findEmployeeById(EMPLOYEE_ID)).willReturn(Optional.of(employee));
-		building = new Building();
-		building.setId(BUILDING_ID);
-		building.setName("Building");
-		building.setAddress("c/Building");
-		building.setIncome(0);
-		given(this.buildingService.findBuildingById(BUILDING_ID)).willReturn(Optional.of(building));
+		building1 = new Building();
+		building1.setId(BUILDING_1_ID);
+		building1.setName("Building");
+		building1.setAddress("c/Building");
+		building1.setIncome(0);
+		given(this.buildingService.findBuildingById(BUILDING_1_ID)).willReturn(Optional.of(building1));
+		building2 = new Building();
+		building2.setId(BUILDING_2_ID);
+		building2.setName("Building");
+		building2.setAddress("c/Building");
+		building2.setIncome(0);
+		given(this.buildingService.findBuildingById(BUILDING_2_ID)).willReturn(Optional.of(building2));
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -182,7 +192,7 @@ class EmployeeControllerTests {
 	@WithMockUser(value = "spring")
 	@Test
 	void testAssignBuildingSuccess() throws Exception {
-		mockMvc.perform(post("/unassignedEmployees/" + EMPLOYEE_ID + "/assignBuilding/" + BUILDING_ID)
+		mockMvc.perform(post("/unassignedEmployees/" + EMPLOYEE_ID + "/assignBuilding/" + BUILDING_1_ID)
 				// other
 				.with(csrf()))
 				// result
@@ -193,7 +203,7 @@ class EmployeeControllerTests {
 	@WithMockUser(value = "spring")
 	@Test
 	void testAssignBuildingWrongEmployeeId() throws Exception {
-		mockMvc.perform(post("/unassignedEmployees/" + 0 + "/assignBuilding/" + BUILDING_ID)
+		mockMvc.perform(post("/unassignedEmployees/" + 0 + "/assignBuilding/" + BUILDING_1_ID)
 				// other
 				.with(csrf()))
 				// result
@@ -213,8 +223,8 @@ class EmployeeControllerTests {
 	@WithMockUser(value = "spring")
 	@Test
 	void testAssignBuildingWhenEmployeeAlreadyHasBuilding() throws Exception {
-		employee.setBuilding(building);
-		mockMvc.perform(post("/unassignedEmployees/" + EMPLOYEE_ID + "/assignBuilding/" + BUILDING_ID)
+		employee.setBuilding(building1);
+		mockMvc.perform(post("/unassignedEmployees/" + EMPLOYEE_ID + "/assignBuilding/" + BUILDING_2_ID)
 				// other
 				.with(csrf()))
 				// result
