@@ -174,7 +174,7 @@ class EmployeeControllerTests {
 
 	@WithMockUser(value = "spring")
 	@Test
-	void testInitAssignBuilding() throws Exception {
+	void testInitAssignEmployeeToBuilding() throws Exception {
 		mockMvc.perform(get("/unassignedEmployees/{employeeId}/assignBuilding", EMPLOYEE_ID))
 				// result
 				.andExpect(status().isOk()).andExpect(model().attributeExists("selections"))
@@ -183,7 +183,7 @@ class EmployeeControllerTests {
 
 	@WithMockUser(value = "spring")
 	@Test
-	void testInitAssignBuildingWrongEmployeeId() throws Exception {
+	void testInitAssignEmployeeWithWrongEmployeeIdToBuilding() throws Exception {
 		mockMvc.perform(get("/unassignedEmployees/{employeeId}/assignBuilding", 0))
 				// result
 				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
@@ -191,7 +191,7 @@ class EmployeeControllerTests {
 
 	@WithMockUser(value = "spring")
 	@Test
-	void testAssignBuildingSuccess() throws Exception {
+	void testAssignEmployeeToBuildingSuccess() throws Exception {
 		mockMvc.perform(post("/unassignedEmployees/{employeeId}/assignBuilding/{buildingId}", EMPLOYEE_ID, BUILDING_1_ID)
 				// other
 				.with(csrf()))
@@ -202,7 +202,7 @@ class EmployeeControllerTests {
 
 	@WithMockUser(value = "spring")
 	@Test
-	void testAssignBuildingWrongEmployeeId() throws Exception {
+	void testAssignEmployeeWithWrongEmployeeIdToBuilding() throws Exception {
 		mockMvc.perform(post("/unassignedEmployees/{employeeId}/assignBuilding/{buildingId}", 0, BUILDING_1_ID)
 				// other
 				.with(csrf()))
@@ -212,7 +212,7 @@ class EmployeeControllerTests {
 
 	@WithMockUser(value = "spring")
 	@Test
-	void testAssignBuildingWrongBuildingId() throws Exception {
+	void testAssignEmployeeToBuildingWithWrongBuildingId() throws Exception {
 		mockMvc.perform(post("/unassignedEmployees/{employeeId}/assignBuilding/{buildingId}", EMPLOYEE_ID, 0)
 				// other
 				.with(csrf()))
@@ -222,7 +222,7 @@ class EmployeeControllerTests {
 
 	@WithMockUser(value = "spring")
 	@Test
-	void testAssignBuildingWhenEmployeeAlreadyHasBuilding() throws Exception {
+	void testAssignEmployeeThatAlreadyHasABuildingToBuilding() throws Exception {
 		employee.setBuilding(building1);
 		mockMvc.perform(post("/unassignedEmployees/{employeeId}/assignBuilding/{buildingId}", EMPLOYEE_ID, BUILDING_2_ID)
 				// other
