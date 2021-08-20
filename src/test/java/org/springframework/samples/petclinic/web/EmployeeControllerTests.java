@@ -175,7 +175,7 @@ class EmployeeControllerTests {
 	@WithMockUser(value = "spring")
 	@Test
 	void testInitAssignBuilding() throws Exception {
-		mockMvc.perform(get("/unassignedEmployees/" + EMPLOYEE_ID + "/assignBuilding"))
+		mockMvc.perform(get("/unassignedEmployees/{employeeId}/assignBuilding", EMPLOYEE_ID))
 				// result
 				.andExpect(status().isOk()).andExpect(model().attributeExists("selections"))
 				.andExpect(view().name("employees/selectBuilding"));
@@ -184,7 +184,7 @@ class EmployeeControllerTests {
 	@WithMockUser(value = "spring")
 	@Test
 	void testInitAssignBuildingWrongEmployeeId() throws Exception {
-		mockMvc.perform(get("/unassignedEmployees/" + 0 + "/assignBuilding"))
+		mockMvc.perform(get("/unassignedEmployees/{employeeId}/assignBuilding", 0))
 				// result
 				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
 	}
@@ -192,7 +192,7 @@ class EmployeeControllerTests {
 	@WithMockUser(value = "spring")
 	@Test
 	void testAssignBuildingSuccess() throws Exception {
-		mockMvc.perform(post("/unassignedEmployees/" + EMPLOYEE_ID + "/assignBuilding/" + BUILDING_1_ID)
+		mockMvc.perform(post("/unassignedEmployees/{employeeId}/assignBuilding/{buildingId}", EMPLOYEE_ID, BUILDING_1_ID)
 				// other
 				.with(csrf()))
 				// result
@@ -203,7 +203,7 @@ class EmployeeControllerTests {
 	@WithMockUser(value = "spring")
 	@Test
 	void testAssignBuildingWrongEmployeeId() throws Exception {
-		mockMvc.perform(post("/unassignedEmployees/" + 0 + "/assignBuilding/" + BUILDING_1_ID)
+		mockMvc.perform(post("/unassignedEmployees/{employeeId}/assignBuilding/{buildingId}", 0, BUILDING_1_ID)
 				// other
 				.with(csrf()))
 				// result
@@ -213,7 +213,7 @@ class EmployeeControllerTests {
 	@WithMockUser(value = "spring")
 	@Test
 	void testAssignBuildingWrongBuildingId() throws Exception {
-		mockMvc.perform(post("/unassignedEmployees/" + EMPLOYEE_ID + "/assignBuilding/" + 0)
+		mockMvc.perform(post("/unassignedEmployees/{employeeId}/assignBuilding/{buildingId}", EMPLOYEE_ID, 0)
 				// other
 				.with(csrf()))
 				// result
@@ -224,7 +224,7 @@ class EmployeeControllerTests {
 	@Test
 	void testAssignBuildingWhenEmployeeAlreadyHasBuilding() throws Exception {
 		employee.setBuilding(building1);
-		mockMvc.perform(post("/unassignedEmployees/" + EMPLOYEE_ID + "/assignBuilding/" + BUILDING_2_ID)
+		mockMvc.perform(post("/unassignedEmployees/{employeeId}/assignBuilding/{buildingId}", EMPLOYEE_ID, BUILDING_2_ID)
 				// other
 				.with(csrf()))
 				// result
