@@ -219,7 +219,7 @@ class TaskControllerTests {
 				// other
 				.with(csrf()))
 				// result
-				.andExpect(status().isOk()).andExpect(model().attributeExists("selections"))
+				.andExpect(status().isOk()).andExpect(model().attributeDoesNotExist("error"))
 				.andExpect(view().name("tasks/myTasksList"));
 	}
 
@@ -266,7 +266,7 @@ class TaskControllerTests {
 	void testInitAssignEmployeeToTask() throws Exception {
 		mockMvc.perform(get("/tasks/{taskId}/assignEmployee", TASK_1_ID))
 				// result
-				.andExpect(status().isOk()).andExpect(model().attributeExists("selections"))
+				.andExpect(status().isOk()).andExpect(model().attributeDoesNotExist("error")).andExpect(model().attributeExists("selections"))
 				.andExpect(view().name("tasks/selectEmployee"));
 	}
 
@@ -294,7 +294,7 @@ class TaskControllerTests {
 				// other
 				.with(csrf()))
 				// result
-				.andExpect(status().isOk()).andExpect(model().attributeExists("selections"))
+				.andExpect(status().isOk()).andExpect(model().attributeDoesNotExist("error")).andExpect(model().attributeExists("selections"))
 				.andExpect(view().name("tasks/uncompleteTasksList"));
 	}
 
@@ -374,7 +374,7 @@ class TaskControllerTests {
 		employee1.addTask(task1);
 		mockMvc.perform(get("/tasks/{taskId}/assignTool", TASK_1_ID))
 				// result
-				.andExpect(status().isOk()).andExpect(model().attributeExists("selections"))
+				.andExpect(status().isOk()).andExpect(model().attributeDoesNotExist("error")).andExpect(model().attributeExists("selections"))
 				.andExpect(view().name("tasks/selectTool"));
 	}
 
@@ -408,7 +408,7 @@ class TaskControllerTests {
 				// other
 				.with(csrf()))
 				// result
-				.andExpect(status().isOk()).andExpect(model().attributeExists("selections"))
+				.andExpect(status().isOk()).andExpect(model().attributeDoesNotExist("error")).andExpect(model().attributeExists("selections"))
 				.andExpect(view().name("tasks/uncompleteTasksList"));
 	}
 

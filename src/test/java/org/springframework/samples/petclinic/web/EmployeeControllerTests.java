@@ -177,7 +177,7 @@ class EmployeeControllerTests {
 	void testInitAssignEmployeeToBuilding() throws Exception {
 		mockMvc.perform(get("/unassignedEmployees/{employeeId}/assignBuilding", EMPLOYEE_ID))
 				// result
-				.andExpect(status().isOk()).andExpect(model().attributeExists("selections"))
+				.andExpect(status().isOk()).andExpect(model().attributeDoesNotExist("error")).andExpect(model().attributeExists("selections"))
 				.andExpect(view().name("employees/selectBuilding"));
 	}
 
@@ -196,7 +196,7 @@ class EmployeeControllerTests {
 				// other
 				.with(csrf()))
 				// result
-				.andExpect(status().isOk()).andExpect(model().attributeExists("selections"))
+				.andExpect(status().isOk()).andExpect(model().attributeDoesNotExist("error")).andExpect(model().attributeExists("selections"))
 				.andExpect(view().name("employees/unassignedEmployeesList"));
 	}
 
