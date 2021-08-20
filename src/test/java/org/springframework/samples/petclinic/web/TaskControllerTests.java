@@ -213,6 +213,8 @@ class TaskControllerTests {
 	@WithMockUser(value = "spring")
 	@Test
 	void testCompleteTaskSuccess() throws Exception {
+		task1.addEmployee(employee1);
+		employee1.addTask(task1);
 		mockMvc.perform(post("/myTasks/{taskId}/complete", TASK_1_ID)
 				// other
 				.with(csrf()))
@@ -224,6 +226,8 @@ class TaskControllerTests {
 	@WithMockUser(value = "spring")
 	@Test
 	void testCompleteTaskWithWrongTaskId() throws Exception {
+		task1.addEmployee(employee1);
+		employee1.addTask(task1);
 		mockMvc.perform(post("/myTasks/{taskId}/complete", 0)
 				// other
 				.with(csrf()))
@@ -244,6 +248,8 @@ class TaskControllerTests {
 	@WithMockUser(value = "spring")
 	@Test
 	void testCompleteTaskThatIsAlreadyComplete() throws Exception {
+		task1.addEmployee(employee1);
+		employee1.addTask(task1);
 		task1.setComplete(true);
 		mockMvc.perform(post("/myTasks/{taskId}/complete", TASK_1_ID)
 				// other
