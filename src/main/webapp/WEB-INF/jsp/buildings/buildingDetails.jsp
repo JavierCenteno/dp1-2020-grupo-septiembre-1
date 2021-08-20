@@ -26,6 +26,10 @@
 			<td><c:out value="${building.address}" /></td>
 		</tr>
 		<tr>
+			<th>Income</th>
+			<td><c:out value="${building.income}" /></td>
+		</tr>
+		<tr>
 			<th>Tools</th>
 			<td><a href="/buildings/${building.id}/tools">View list of tools</a></td>
 		</tr>

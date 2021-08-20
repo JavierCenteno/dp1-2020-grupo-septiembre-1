@@ -22,6 +22,7 @@
 			<tr>
 				<th>Name</th>
 				<th>Address</th>
+				<th>Income</th>
 				<th>Tools</th>
 			</tr>
 		</thead>
@@ -34,6 +35,7 @@
 						</spring:url> <a href="${fn:escapeXml(buildingUrl)}"><c:out
 								value="${building.name}" /></a></td>
 					<td><c:out value="${building.address}" /></td>
+					<td><c:out value="${building.income}" /></td>
 					<td><a href="/buildings/${building.id}/tools">View list of tools</a></td>
 				</tr>
 			</c:forEach>
