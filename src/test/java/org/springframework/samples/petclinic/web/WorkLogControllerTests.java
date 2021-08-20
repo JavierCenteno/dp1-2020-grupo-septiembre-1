@@ -199,4 +199,43 @@ class WorkLogControllerTests {
 				.andExpect(view().name("welcome"));
 	}
 
+	@WithMockUser(value = "spring")
+	@Test
+	void testProcessCreationFormWithTaskWithWrongTaskId() throws Exception {
+		mockMvc.perform(post("/myTasks/{taskId}/workLog", 0)
+				// params
+				.param("hours", "4")
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testProcessCreationFormWithTaskNotAssignedToEmployee() throws Exception {
+		task.removeEmployee(employee);
+		employee.removeTask(task);
+		mockMvc.perform(post("/myTasks/{taskId}/workLog", TASK_ID)
+				// params
+				.param("hours", "4")
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testProcessCreationFormWithCompleteTask() throws Exception {
+		task.setComplete(true);
+		mockMvc.perform(post("/myTasks/{taskId}/workLog", TASK_ID)
+				// params
+				.param("hours", "4")
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
+	}
+
 }
