@@ -117,6 +117,57 @@ class WorkLogServiceTests {
 	}
 
 	@Test
+	void shouldFindHoursLoggedByEmployeeToday() {
+		Employee employee1 = this.employeeService.findEmployeeById(1).get();
+		Integer totalHours;
+		// Ahora mismo hay 0 horas registradas de employee1 en el día de hoy
+		totalHours = this.workLogService.findHoursLoggedByEmployeeToday(employee1.getId());
+		assertThat(totalHours).isEqualTo(0);
+		// Creamos un nuevo work log con employee1 y 4 horas en el día de hoy
+		WorkLog workLog1 = new WorkLog();
+		workLog1.setEmployee(employee1);
+		workLog1.setHours(4);
+		workLog1.setDate(new Date());
+		this.workLogService.saveWorkLog(workLog1);
+		// Ahora mismo debería haber 4 horas con employee1
+		totalHours = this.workLogService.findHoursLoggedByEmployeeToday(employee1.getId());
+		assertThat(totalHours).isEqualTo(4);
+		// Creamos un nuevo work log con employee1 y 3 horas en el día de hoy
+		WorkLog workLog2 = new WorkLog();
+		workLog2.setEmployee(employee1);
+		workLog2.setHours(3);
+		workLog2.setDate(new Date());
+		this.workLogService.saveWorkLog(workLog2);
+		// Ahora mismo debería haber 7 horas con employee1
+		totalHours = this.workLogService.findHoursLoggedByEmployeeToday(employee1.getId());
+		assertThat(totalHours).isEqualTo(7);
+		// Creamos un nuevo work log con employee1 y 3 horas en el día de ayer
+		Calendar yesterday = Calendar.getInstance();
+		yesterday.add(Calendar.DATE, -1);
+		WorkLog workLog3 = new WorkLog();
+		workLog3.setEmployee(employee1);
+		workLog3.setHours(3);
+		workLog3.setDate(yesterday.getTime());
+		this.workLogService.saveWorkLog(workLog3);
+		// Ahora mismo debería haber 7 horas con employee1
+		// (las horas de ayer no cuentan)
+		totalHours = this.workLogService.findHoursLoggedByEmployeeToday(employee1.getId());
+		assertThat(totalHours).isEqualTo(7);
+		// Creamos un nuevo work log con employee1 y 3 horas en el día de mañana
+		Calendar tomorrow = Calendar.getInstance();
+		tomorrow.add(Calendar.DATE, 1);
+		WorkLog workLog4 = new WorkLog();
+		workLog4.setEmployee(employee1);
+		workLog4.setHours(3);
+		workLog4.setDate(tomorrow.getTime());
+		this.workLogService.saveWorkLog(workLog4);
+		// Ahora mismo debería haber 7 horas con employee1
+		// (las horas de mañana no cuentan)
+		totalHours = this.workLogService.findHoursLoggedByEmployeeToday(employee1.getId());
+		assertThat(totalHours).isEqualTo(7);
+	}
+
+	@Test
 	void shouldFindWorkLogWithCorrectId() {
 		Employee employee1 = this.employeeService.findEmployeeById(1).get();
 		Collection<WorkLog> workLogs;
