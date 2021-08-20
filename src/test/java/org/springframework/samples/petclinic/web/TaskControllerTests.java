@@ -37,8 +37,10 @@ class TaskControllerTests {
 	// Initialize
 
 	private static final int TASK_ID = 1;
-	private static final int EMPLOYEE_ID = 1;
-	private static final int BUILDING_ID = 1;
+	private static final int EMPLOYEE_1_ID = 1;
+	private static final int EMPLOYEE_2_ID = 2;
+	private static final int BUILDING_1_ID = 1;
+	private static final int BUILDING_2_ID = 2;
 	private static final int TOOL_ID = 1;
 
 	// @Autowired
@@ -60,33 +62,49 @@ class TaskControllerTests {
 	private MockMvc mockMvc;
 
 	private Task task;
-	private Employee employee;
-	private Building building;
+	private Employee employee1;
+	private Employee employee2;
+	private Building building1;
+	private Building building2;
 	private Tool tool;
 
 	@BeforeEach
 	void setup() {
-		building = new Building();
-		building.setId(BUILDING_ID);
-		building.setName("Building");
-		building.setAddress("c/Building");
-		building.setIncome(0);
-		given(this.buildingService.findBuildingById(BUILDING_ID)).willReturn(Optional.of(building));
+		building1 = new Building();
+		building1.setId(BUILDING_1_ID);
+		building1.setName("Building");
+		building1.setAddress("c/Building");
+		building1.setIncome(0);
+		given(this.buildingService.findBuildingById(BUILDING_1_ID)).willReturn(Optional.of(building1));
+		building2 = new Building();
+		building2.setId(BUILDING_2_ID);
+		building2.setName("Building");
+		building2.setAddress("c/Building");
+		building2.setIncome(0);
+		given(this.buildingService.findBuildingById(BUILDING_2_ID)).willReturn(Optional.of(building2));
 		tool = new Tool();
 		tool.setId(TOOL_ID);
 		tool.setName("Tool");
-		tool.setBuilding(building);
-		building.addTool(tool);
+		tool.setBuilding(building1);
+		building1.addTool(tool);
 		given(this.toolService.findToolById(TOOL_ID)).willReturn(Optional.of(tool));
-		employee = new Employee();
-		employee.setId(EMPLOYEE_ID);
-		employee.setName("Employee");
-		employee.setEmail("employee@employee.com");
-		employee.setAddress("c/Employee");
-		employee.setBuilding(building);
-		building.addEmployee(employee);
-		given(this.employeeService.findEmployeeById(EMPLOYEE_ID)).willReturn(Optional.of(employee));
-		given(this.employeeService.findEmployeePrincipal()).willReturn(Optional.of(employee));
+		employee1 = new Employee();
+		employee1.setId(EMPLOYEE_1_ID);
+		employee1.setName("Employee");
+		employee1.setEmail("employee@employee.com");
+		employee1.setAddress("c/Employee");
+		employee1.setBuilding(building1);
+		building1.addEmployee(employee1);
+		given(this.employeeService.findEmployeeById(EMPLOYEE_1_ID)).willReturn(Optional.of(employee1));
+		given(this.employeeService.findEmployeePrincipal()).willReturn(Optional.of(employee1));
+		employee2 = new Employee();
+		employee2.setId(EMPLOYEE_2_ID);
+		employee2.setName("Employee");
+		employee2.setEmail("employee@employee.com");
+		employee2.setAddress("c/Employee");
+		employee2.setBuilding(building2);
+		building2.addEmployee(employee2);
+		given(this.employeeService.findEmployeeById(EMPLOYEE_2_ID)).willReturn(Optional.of(employee2));
 		task = new Task();
 		task.setId(TASK_ID);
 		task.setName("Task");
@@ -184,36 +202,117 @@ class TaskControllerTests {
 	////////////////////////////////////////////////////////////////////////////////
 	// Tests: Complete
 
-	@WithMockUser(value = "spring")
-	@Test
-	void testCompleteTask() throws Exception {
-		mockMvc.perform(get("/myTasks/{taskId}/complete", TASK_ID))
-				// result
-				.andExpect(view().name("tasks/myTasksList"));
-	}
+	// TODO
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Tests: Assign employee
 
 	@WithMockUser(value = "spring")
 	@Test
-	void testAssignEmployeeToTask() throws Exception {
-		mockMvc.perform(get("/tasks/{taskId}/assignEmployee/{employeeId}", TASK_ID, EMPLOYEE_ID))
+	void testInitAssignEmployee() throws Exception {
+		mockMvc.perform(get("/tasks/{taskId}/assignEmployee", TASK_ID))
 				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("selections"))
+				.andExpect(view().name("tasks/selectEmployee"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testInitAssignEmployeeWrongTaskId() throws Exception {
+		mockMvc.perform(get("/tasks/{taskId}/assignEmployee/", 0))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testInitAssignEmployeeTaskComplete() throws Exception {
+		task.setComplete(true);
+		mockMvc.perform(get("/tasks/{taskId}/assignEmployee", TASK_ID))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testAssignEmployeeSuccess() throws Exception {
+		mockMvc.perform(post("/tasks/{taskId}/assignEmployee/{employeeId}", TASK_ID, EMPLOYEE_1_ID)
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("selections"))
 				.andExpect(view().name("tasks/uncompleteTasksList"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testAssignEmployeeWrongTaskId() throws Exception {
+		mockMvc.perform(post("/tasks/{taskId}/assignEmployee/{employeeId}", 0, EMPLOYEE_1_ID)
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testAssignEmployeeWrongEmployeeId() throws Exception {
+		mockMvc.perform(post("/tasks/{taskId}/assignEmployee/{employeeId}", TASK_ID, 0)
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testAssignEmployeeWithoutBuilding() throws Exception {
+		employee1.setBuilding(null);
+		mockMvc.perform(post("/tasks/{taskId}/assignEmployee/{employeeId}", TASK_ID, EMPLOYEE_1_ID)
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testAssignEmployeeTaskComplete() throws Exception {
+		task.setComplete(true);
+		mockMvc.perform(post("/tasks/{taskId}/assignEmployee/{employeeId}", TASK_ID, EMPLOYEE_1_ID)
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testAssignEmployeeAlreadyAssigned() throws Exception {
+		employee1.addTask(task);
+		task.addEmployee(employee1);
+		mockMvc.perform(post("/tasks/{taskId}/assignEmployee/{employeeId}", TASK_ID, EMPLOYEE_1_ID)
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testAssignEmployeeDifferentBuilding() throws Exception {
+		employee1.addTask(task);
+		task.addEmployee(employee1);
+		mockMvc.perform(post("/tasks/{taskId}/assignEmployee/{employeeId}", TASK_ID, EMPLOYEE_2_ID)
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Tests: Assign tool
 
-	@WithMockUser(value = "spring")
-	@Test
-	void testAssignToolToTask() throws Exception {
-		task.addEmployee(employee);
-		employee.addTask(task);
-		mockMvc.perform(get("/tasks/{taskId}/assignTool/{toolId}", TASK_ID, TOOL_ID))
-				// result
-				.andExpect(view().name("tasks/uncompleteTasksList"));
-	}
+	// TODO
 
 }
