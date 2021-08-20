@@ -55,9 +55,6 @@ public class WorkLogController {
 		Optional<Task> task = this.taskService.findTaskById(taskId);
 		Integer totalHours = this.workLogService.findHoursLoggedByEmployeeToday(employee.get().getId());
 
-		System.out.println("TOTAL HOURS: " + totalHours);
-		System.out.println("ERROR: " + totalHours != null ? totalHours >= 8 : false);
-
 		if (!employee.isPresent()) {
 			// No *debería* ser posible
 			// El usuario necesita la autoridad "employee" para llegar aquí
