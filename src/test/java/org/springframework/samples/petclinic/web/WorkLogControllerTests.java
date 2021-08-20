@@ -21,7 +21,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.util.Date;
 import java.util.Optional;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -67,7 +66,7 @@ class WorkLogControllerTests {
 		given(this.taskService.findTaskById(TASK_ID)).willReturn(Optional.of(task));
 		given(this.employeeService.findEmployeeById(EMPLOYEE_ID)).willReturn(Optional.of(employee));
 		given(this.employeeService.findEmployeePrincipal()).willReturn(Optional.of(employee));
-		given(this.workLogService.findHoursLoggedByEmployeeAtDate(EMPLOYEE_ID, new Date())).willReturn(0);
+		given(this.workLogService.findHoursLoggedByEmployeeToday(EMPLOYEE_ID)).willReturn(0);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -78,13 +77,63 @@ class WorkLogControllerTests {
 	void testInitCreationForm() throws Exception {
 		mockMvc.perform(get("/myTasks/{taskId}/workLog", TASK_ID))
 				// result
-				.andExpect(status().isOk()).andExpect(model().attributeExists("workLog"))
+				.andExpect(status().isOk()).andExpect(model().attributeDoesNotExist("error")).andExpect(model().attributeExists("workLog"))
 				.andExpect(view().name("workLogs/createOrUpdateWorkLogForm"));
 	}
 
 	@WithMockUser(value = "spring")
 	@Test
-	void testProcessCreationFormSuccess() throws Exception {
+	void testInitCreationFormWithTaskWithWrongTaskId() throws Exception {
+		mockMvc.perform(get("/myTasks/{taskId}/workLog", 0))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testInitCreationFormWithTaskNotAssignedToEmployee() throws Exception {
+		task.removeEmployee(employee);
+		employee.removeTask(task);
+		mockMvc.perform(get("/myTasks/{taskId}/workLog", TASK_ID))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testInitCreationFormWithCompleteTask() throws Exception {
+		task.setComplete(true);
+		mockMvc.perform(get("/myTasks/{taskId}/workLog", TASK_ID))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testInitCreationFormWithTooManyHours() throws Exception {
+		given(this.workLogService.findHoursLoggedByEmployeeToday(EMPLOYEE_ID)).willReturn(8);
+		mockMvc.perform(get("/myTasks/{taskId}/workLog", TASK_ID))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testProcessCreationFormSuccessWithZeroHours() throws Exception {
+		given(this.workLogService.findHoursLoggedByEmployeeToday(EMPLOYEE_ID)).willReturn(8);
+		mockMvc.perform(post("/myTasks/{taskId}/workLog", TASK_ID)
+				// params
+				.param("hours", "0")
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().is3xxRedirection());
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testProcessCreationFormSuccessWithFourHours() throws Exception {
+		given(this.workLogService.findHoursLoggedByEmployeeToday(EMPLOYEE_ID)).willReturn(4);
 		mockMvc.perform(post("/myTasks/{taskId}/workLog", TASK_ID)
 				// params
 				.param("hours", "4")
@@ -96,7 +145,20 @@ class WorkLogControllerTests {
 
 	@WithMockUser(value = "spring")
 	@Test
-	void testProcessCreationFormHasErrors() throws Exception {
+	void testProcessCreationFormSuccessWithEightHours() throws Exception {
+		given(this.workLogService.findHoursLoggedByEmployeeToday(EMPLOYEE_ID)).willReturn(0);
+		mockMvc.perform(post("/myTasks/{taskId}/workLog", TASK_ID)
+				// params
+				.param("hours", "8")
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().is3xxRedirection());
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testProcessCreationFormNotEnoughHours() throws Exception {
 		mockMvc.perform(post("/myTasks/{taskId}/workLog", TASK_ID)
 				// params
 				.param("hours", "-1")
@@ -106,6 +168,35 @@ class WorkLogControllerTests {
 				.andExpect(status().isOk()).andExpect(model().attributeHasErrors("workLog"))
 				.andExpect(model().attributeHasFieldErrors("workLog", "hours"))
 				.andExpect(view().name("workLogs/createOrUpdateWorkLogForm"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testProcessCreationFormTooManyHoursAlready() throws Exception {
+		given(this.workLogService.findHoursLoggedByEmployeeToday(EMPLOYEE_ID)).willReturn(4);
+		// el worklog en sí está bien
+		// lo que debe fallar es que sus horas más las ya registradas dan demasiadas
+		mockMvc.perform(post("/myTasks/{taskId}/workLog", TASK_ID)
+				// params
+				.param("hours", "5")
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testProcessCreationFormTooManyHours() throws Exception {
+		mockMvc.perform(post("/myTasks/{taskId}/workLog", TASK_ID)
+				// params
+				.param("hours", "9")
+				// other
+				.with(csrf()))
+				// result
+				.andExpect(status().isOk()).andExpect(model().attributeHasErrors("workLog"))
+				.andExpect(model().attributeHasFieldErrors("workLog", "hours"))
+				.andExpect(view().name("welcome"));
 	}
 
 }
