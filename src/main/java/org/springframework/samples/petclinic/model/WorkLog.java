@@ -46,7 +46,7 @@ public class WorkLog extends BaseEntity {
 	////////////////////////////////////////////////////////////////////////////////
 	// Employee
 
-	@ManyToOne
+	@ManyToOne(optional = false)
 	private Employee employee;
 
 	public Employee getEmployee() {
@@ -60,7 +60,7 @@ public class WorkLog extends BaseEntity {
 	////////////////////////////////////////////////////////////////////////////////
 	// Task
 
-	@ManyToOne
+	@ManyToOne(optional = false)
 	private Task task;
 
 	public Task getTask() {

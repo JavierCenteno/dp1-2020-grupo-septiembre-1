@@ -28,7 +28,7 @@ public class Tool extends BaseEntity {
 	////////////////////////////////////////////////////////////////////////////////
 	// Building
 
-	@ManyToOne
+	@ManyToOne(optional = false)
 	private Building building;
 
 	public Building getBuilding() {
@@ -42,7 +42,7 @@ public class Tool extends BaseEntity {
 	////////////////////////////////////////////////////////////////////////////////
 	// Task
 
-	@ManyToOne
+	@ManyToOne(optional = true)
 	private Task task;
 
 	public Task getTask() {

@@ -40,7 +40,7 @@ public class Employee extends Actor {
 	////////////////////////////////////////////////////////////////////////////////
 	// Building
 
-	@ManyToOne
+	@ManyToOne(optional = true)
 	private Building building;
 
 	public Building getBuilding() {
