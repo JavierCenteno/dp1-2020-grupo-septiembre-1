@@ -71,8 +71,8 @@ public class WorkLogController {
 			mav.addObject("error", "The task with id " + taskId + " is already complete.");
 		} else if (totalHours != null ? totalHours >= 8 : false) {
 			mav = new ModelAndView("welcome");
-			mav.addObject("error", "The task with id " + taskId
-					+ " can't have more than 8 hours logged in by the employee today (currently: " + totalHours + ").");
+			mav.addObject("error", "The employee with id " + employee.get().getId()
+					+ " can't have more than 8 hours logged in today (currently: " + totalHours + ").");
 		} else {
 			mav = new ModelAndView("workLogs/createOrUpdateWorkLogForm");
 			WorkLog workLog = new WorkLog();
@@ -108,8 +108,8 @@ public class WorkLogController {
 		} else if (totalHours != null ? totalHours + workLog.getHours() > 8 : false) {
 			mav = new ModelAndView("welcome");
 			mav.addObject("error",
-					"The task with id " + taskId
-							+ " can't have more than 8 hours logged in by the employee today (currently: " + totalHours
+					"The employee with id " + employee.get().getId()
+							+ " can't have more than 8 hours logged in today (currently: " + totalHours
 							+ ", you attempted to add " + workLog.getHours() + ").");
 		} else if (result.hasErrors()) {
 			mav = new ModelAndView("workLogs/createOrUpdateWorkLogForm");
