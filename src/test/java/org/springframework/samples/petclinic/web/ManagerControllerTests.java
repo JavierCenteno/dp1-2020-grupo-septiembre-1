@@ -105,7 +105,7 @@ class ManagerControllerTests {
 	void testProcessCreationFormSuccess() throws Exception {
 		mockMvc.perform(post("/managers/new")
 				// params
-				.param("name", "Manager").param("email", "manager@manager.com").param("address", "c/Manager")
+				.param("name", "Manager").param("email", "manager@manager.com").param("address", "c/Manager").param("user.username", "manager").param("user.password", "manager")
 				// other
 				.with(csrf()))
 				// result
@@ -117,7 +117,7 @@ class ManagerControllerTests {
 	void testProcessCreationFormHasErrors() throws Exception {
 		mockMvc.perform(post("/managers/new")
 				// params
-				.param("name", "").param("email", "").param("address", "")
+				.param("name", "").param("email", "").param("address", "").param("user.username", "manager").param("user.password", "manager")
 				// other
 				.with(csrf()))
 				// result
