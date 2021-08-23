@@ -3,6 +3,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="petclinic" tagdir="/WEB-INF/tags"%>
 
 <petclinic:layout pageName="tools">
@@ -23,9 +24,9 @@
 			<c:forEach items="${selections}" var="tool">
 				<tr>
 					<td>
-						<form action="/tasks/${taskId}/assignTool/${tool.id}" method="post">
+						<form:form action="/tasks/${taskId}/assignTool/${tool.id}" method="post">
 							<button type="submit"><c:out value="${tool.name}" /></button>
-						</form>
+						</form:form>
 					</td>
 				</tr>
 			</c:forEach>
