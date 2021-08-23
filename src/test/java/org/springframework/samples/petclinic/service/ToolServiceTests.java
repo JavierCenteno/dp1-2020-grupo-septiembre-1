@@ -31,6 +31,9 @@ class ToolServiceTests {
 	@Autowired
 	protected EmployeeService employeeService;
 
+	@Autowired
+	protected BuildingService buildingService;
+
 	////////////////////////////////////////////////////////////////////////////////
 	// Tests
 
@@ -84,6 +87,7 @@ class ToolServiceTests {
 	public void shouldInsertToolIntoDatabaseAndGenerateId() {
 		Tool tool = new Tool();
 		tool.setName("tool5");
+		tool.setBuilding(this.buildingService.findBuildingById(1).get());
 		this.toolService.saveTool(tool);
 		assertThat(tool.getId()).isNotNull();
 	}
