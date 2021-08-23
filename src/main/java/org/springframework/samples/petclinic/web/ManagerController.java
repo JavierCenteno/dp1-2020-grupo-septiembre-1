@@ -58,6 +58,7 @@ public class ManagerController {
 		if (result.hasErrors()) {
 			return VIEWS_EMPLOYEE_CREATE_OR_UPDATE_FORM;
 		} else {
+			manager.getUser().setPassword(UserService.PASSWORD_ENCODER.encode(manager.getUser().getPassword()));
 			this.managerService.saveManager(manager);
 			return "redirect:/managers/" + manager.getId();
 		}

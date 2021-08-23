@@ -8,6 +8,8 @@ import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.repository.UserRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +26,11 @@ public class UserService {
 	// Repository
 
 	private UserRepository userRepository;
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Password encoder
+
+	public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Constructor

@@ -62,6 +62,7 @@ public class EmployeeController {
 		if (result.hasErrors()) {
 			return VIEWS_EMPLOYEE_CREATE_OR_UPDATE_FORM;
 		} else {
+			employee.getUser().setPassword(UserService.PASSWORD_ENCODER.encode(employee.getUser().getPassword()));
 			this.employeeService.saveEmployee(employee);
 			return "redirect:/employees/" + employee.getId();
 		}
