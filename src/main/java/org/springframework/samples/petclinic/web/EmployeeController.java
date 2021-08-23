@@ -22,11 +22,6 @@ import org.springframework.web.servlet.ModelAndView;
 public class EmployeeController {
 
 	////////////////////////////////////////////////////////////////////////////////
-	// URIs
-
-	private static final String VIEWS_EMPLOYEE_CREATE_OR_UPDATE_FORM = "employees/createOrUpdateEmployeeForm";
-
-	////////////////////////////////////////////////////////////////////////////////
 	// Services
 
 	private final EmployeeService employeeService;
@@ -51,21 +46,32 @@ public class EmployeeController {
 	// Create
 
 	@GetMapping(value = "/employees/new")
-	public String initCreationForm(Map<String, Object> model) {
+	public ModelAndView initCreationForm(Map<String, Object> model) {
+		ModelAndView mav;
+
+		mav = new ModelAndView("employees/createOrUpdateEmployeeForm");
 		Employee employee = new Employee();
 		model.put("employee", employee);
-		return VIEWS_EMPLOYEE_CREATE_OR_UPDATE_FORM;
+		
+		return mav;
 	}
 
 	@PostMapping(value = "/employees/new")
-	public String processCreationForm(@Valid Employee employee, BindingResult result) {
-		if (result.hasErrors()) {
-			return VIEWS_EMPLOYEE_CREATE_OR_UPDATE_FORM;
+	public ModelAndView processCreationForm(@Valid Employee employee, BindingResult result) {
+		ModelAndView mav;
+		
+		if (this.employeeService.findEmployeeByUsername(employee.getUser().getUsername()).isPresent()) {
+			mav = new ModelAndView("welcome");
+			mav.addObject("error", "There already exists an employee with the username \"" + employee.getUser().getUsername() + "\".");
+		} else if (result.hasErrors()) {
+			mav = new ModelAndView("employees/createOrUpdateEmployeeForm");
 		} else {
 			employee.getUser().setPassword(UserService.PASSWORD_ENCODER.encode(employee.getUser().getPassword()));
 			this.employeeService.saveEmployee(employee);
-			return "redirect:/employees/" + employee.getId();
+			mav = new ModelAndView("redirect:/employees/" + employee.getId());
 		}
+
+		return mav;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////

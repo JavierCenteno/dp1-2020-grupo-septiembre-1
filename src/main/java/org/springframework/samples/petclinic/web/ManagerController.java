@@ -20,11 +20,6 @@ import org.springframework.web.servlet.ModelAndView;
 public class ManagerController {
 
 	////////////////////////////////////////////////////////////////////////////////
-	// URIs
-
-	private static final String VIEWS_EMPLOYEE_CREATE_OR_UPDATE_FORM = "managers/createOrUpdateManagerForm";
-
-	////////////////////////////////////////////////////////////////////////////////
 	// Services
 
 	private final ManagerService managerService;
@@ -47,21 +42,32 @@ public class ManagerController {
 	// Create
 
 	@GetMapping(value = "/managers/new")
-	public String initCreationForm(Map<String, Object> model) {
+	public ModelAndView initCreationForm(Map<String, Object> model) {
+		ModelAndView mav;
+
+		mav = new ModelAndView("managers/createOrUpdateManagerForm");
 		Manager manager = new Manager();
 		model.put("manager", manager);
-		return VIEWS_EMPLOYEE_CREATE_OR_UPDATE_FORM;
+		
+		return mav;
 	}
 
 	@PostMapping(value = "/managers/new")
-	public String processCreationForm(@Valid Manager manager, BindingResult result) {
-		if (result.hasErrors()) {
-			return VIEWS_EMPLOYEE_CREATE_OR_UPDATE_FORM;
+	public ModelAndView processCreationForm(@Valid Manager manager, BindingResult result) {
+		ModelAndView mav;
+		
+		if (this.managerService.findManagerByUsername(manager.getUser().getUsername()).isPresent()) {
+			mav = new ModelAndView("welcome");
+			mav.addObject("error", "There already exists a manager with the username \"" + manager.getUser().getUsername() + "\".");
+		} else if (result.hasErrors()) {
+			mav = new ModelAndView("managers/createOrUpdateManagerForm");
 		} else {
 			manager.getUser().setPassword(UserService.PASSWORD_ENCODER.encode(manager.getUser().getPassword()));
 			this.managerService.saveManager(manager);
-			return "redirect:/managers/" + manager.getId();
+			mav = new ModelAndView("redirect:/managers/" + manager.getId());
 		}
+
+		return mav;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
