@@ -3,6 +3,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="petclinic" tagdir="/WEB-INF/tags"%>
 
 <petclinic:layout pageName="myTasks">
@@ -29,9 +30,9 @@
 					<td><c:out value="${task.income}" /></td>
 					<td><a href="/myTasks/${task.id}/workLog">Register work</a></td>
 					<td>
-						<form action="/myTasks/${task.id}/complete" method="post">
+						<form:form action="/myTasks/${task.id}/complete" method="post">
 							<button type="submit">Complete task</button>
-						</form>
+						</form:form>
 					</td>
 				</tr>
 			</c:forEach>
