@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.model.Task;
 import org.springframework.samples.petclinic.repository.TaskRepository;
 import org.springframework.stereotype.Service;
@@ -34,27 +33,27 @@ public class TaskService {
 	// Methods
 
 	@Transactional(readOnly = true)
-	public Optional<Task> findTaskById(int id) throws DataAccessException {
+	public Optional<Task> findTaskById(int id) {
 		return this.taskRepository.findById(id);
 	}
 
 	@Transactional(readOnly = true)
-	public Collection<Task> findUnassigned() throws DataAccessException {
+	public Collection<Task> findUnassigned() {
 		return this.taskRepository.findUnassigned();
 	}
 
 	@Transactional(readOnly = true)
-	public Collection<Task> findAssignedAndUncomplete() throws DataAccessException {
+	public Collection<Task> findAssignedAndUncomplete() {
 		return this.taskRepository.findAssignedAndUncomplete();
 	}
 
 	@Transactional(readOnly = true)
-	public Collection<Task> findUncomplete() throws DataAccessException {
+	public Collection<Task> findUncomplete() {
 		return this.taskRepository.findUncomplete();
 	}
 
 	@Transactional(readOnly = true)
-	public Collection<Task> findAssignedToEmployeeAndNotComplete(int employeeId) throws DataAccessException {
+	public Collection<Task> findAssignedToEmployeeAndNotComplete(int employeeId) {
 		return this.taskRepository.findAssignedToEmployeeAndNotComplete(employeeId);
 	}
 
@@ -68,7 +67,7 @@ public class TaskService {
 	}
 
 	@Transactional
-	public void saveTask(Task task) throws DataAccessException {
+	public void saveTask(Task task) {
 		this.taskRepository.save(task);
 	}
 

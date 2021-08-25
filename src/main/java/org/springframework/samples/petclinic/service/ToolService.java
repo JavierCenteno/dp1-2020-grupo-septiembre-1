@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.model.Task;
 import org.springframework.samples.petclinic.model.Tool;
 import org.springframework.samples.petclinic.repository.ToolRepository;
@@ -38,22 +37,22 @@ public class ToolService {
 	// Methods
 
 	@Transactional(readOnly = true)
-	public Optional<Tool> findToolById(int id) throws DataAccessException {
+	public Optional<Tool> findToolById(int id) {
 		return this.toolRepository.findById(id);
 	}
 
 	@Transactional(readOnly = true)
-	public Collection<Tool> findByBuildingId(int buildingId) throws DataAccessException {
+	public Collection<Tool> findByBuildingId(int buildingId) {
 		return this.toolRepository.findByBuildingId(buildingId);
 	}
 
 	@Transactional(readOnly = true)
-	public Collection<Tool> findNotAssignedToTaskInBuilding(int buildingId) throws DataAccessException {
+	public Collection<Tool> findNotAssignedToTaskInBuilding(int buildingId) {
 		return this.toolRepository.findNotAssignedToTaskInBuilding(buildingId);
 	}
 
 	@Transactional(readOnly = true)
-	public Collection<Tool> findAssignableToTask(int taskId) throws DataAccessException {
+	public Collection<Tool> findAssignableToTask(int taskId) {
 		Optional<Task> task = this.taskService.findTaskById(taskId);
 		if (!task.isPresent()) {
 			return new ArrayList<>();
@@ -79,7 +78,7 @@ public class ToolService {
 	}
 
 	@Transactional
-	public void saveTool(Tool tool) throws DataAccessException {
+	public void saveTool(Tool tool) {
 		this.toolRepository.save(tool);
 	}
 

@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.model.WorkLog;
 import org.springframework.samples.petclinic.repository.WorkLogRepository;
 import org.springframework.stereotype.Service;
@@ -39,12 +38,12 @@ public class WorkLogService {
 	// Methods
 
 	@Transactional(readOnly = true)
-	public Optional<WorkLog> findWorkLogById(int id) throws DataAccessException {
+	public Optional<WorkLog> findWorkLogById(int id) {
 		return this.workLogRepository.findById(id);
 	}
 
 	@Transactional(readOnly = true)
-	public Collection<WorkLog> findByEmployee(int employeeId) throws DataAccessException {
+	public Collection<WorkLog> findByEmployee(int employeeId) {
 		return this.workLogRepository.findByEmployee(employeeId);
 	}
 
@@ -63,7 +62,7 @@ public class WorkLogService {
 	}
 
 	@Transactional(readOnly = true)
-	public Integer findHoursLoggedByEmployeeAtDate(int employeeId, Date date) throws DataAccessException {
+	public Integer findHoursLoggedByEmployeeAtDate(int employeeId, Date date) {
 		if (date == null) {
 			return null;
 		}
@@ -82,7 +81,7 @@ public class WorkLogService {
 	}
 
 	@Transactional
-	public void saveWorkLog(WorkLog workLog) throws DataAccessException {
+	public void saveWorkLog(WorkLog workLog) {
 		this.workLogRepository.save(workLog);
 	}
 

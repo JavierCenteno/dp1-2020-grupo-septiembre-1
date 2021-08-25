@@ -42,12 +42,12 @@ public class AuthoritiesService {
 	// Methods
 
 	@Transactional
-	public void saveAuthorities(Authorities authorities) throws DataAccessException {
+	public void saveAuthorities(Authorities authorities) {
 		authoritiesRepository.save(authorities);
 	}
 
 	@Transactional
-	public void saveAuthorities(String username, String role) throws DataAccessException {
+	public void saveAuthorities(String username, String role) {
 		Authorities authority = new Authorities();
 		Optional<User> user = userService.findUser(username);
 		if (user.isPresent()) {
