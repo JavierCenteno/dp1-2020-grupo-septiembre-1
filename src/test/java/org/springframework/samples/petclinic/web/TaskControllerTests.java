@@ -273,7 +273,7 @@ class TaskControllerTests {
 	@WithMockUser(value = "spring")
 	@Test
 	void testInitAssignEmployeeToTaskWithWrongTaskId() throws Exception {
-		mockMvc.perform(get("/tasks/{taskId}/assignEmployee/", 0))
+		mockMvc.perform(get("/tasks/{taskId}/assignEmployee", 0))
 				// result
 				.andExpect(status().isOk()).andExpect(model().attributeExists("error"));
 	}
