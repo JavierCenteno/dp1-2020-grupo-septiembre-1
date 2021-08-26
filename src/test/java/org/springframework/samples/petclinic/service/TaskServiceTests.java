@@ -51,16 +51,11 @@ class TaskServiceTests {
 	void shouldFindAllUnassignedTasks() {
 		Employee employee1 = this.employeeService.findEmployeeById(1).get();
 		Task task1 = this.taskService.findTaskById(1).get();
-		Collection<Task> tasks;
-		// task1 no tiene empleado asignada aún
-		// así que debe haber 4 tareas sin empleados
-		tasks = this.taskService.findUnassigned();
-		assertThat(tasks.size()).isEqualTo(4);
-		// task1 tiene ahora employee1 asignada
-		// así que debe haber una tarea menos sin empleados
 		task1.addEmployee(employee1);
 		this.taskService.saveTask(task1);
-		tasks = this.taskService.findUnassigned();
+		Collection<Task> tasks = this.taskService.findUnassigned();
+		// Normalmente hay 4 tareas sin asignar
+		// Ahora se ha asignado 1 con lo que hay 4 - 1 = 3
 		assertThat(tasks.size()).isEqualTo(3);
 	}
 
